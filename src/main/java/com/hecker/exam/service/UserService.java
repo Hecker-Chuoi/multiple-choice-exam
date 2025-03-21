@@ -26,6 +26,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,16 +40,25 @@ public class UserService {
     UserMapper mapper;
     Validator validator;
 
+    private String generateUsername(String fullName) {
+        StringBuilder sb = new StringBuilder();
+        for(String part : fullName.toLowerCase().trim().split("\\s+")){
+            sb.append(part.charAt(0));
+        }
+        sb.append((int)(Math.random() * 1000));
+        if(repos.existsByUsername(sb.toString()))
+            return generateUsername(fullName);
+        return sb.toString();
+    }
+
     public User createUser(UserCreationRequest request) {
-        if(repos.existsByUsername(request.getUsername()))
-            throw new AppException(StatusCode.USERNAME_ALREADY_EXISTS);
+        User user = mapper.createUser(request);
+        user.setUsername(generateUsername(request.getFullName()));
 
         PasswordEncoder encoder = new BCryptPasswordEncoder(10);
-        User user = mapper.createUser(request);
-        user.setPassword(encoder.encode(request.getPassword()));
+        user.setPassword(encoder.encode(request.getDob().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 
         user.setRole(Role.CANDIDATE);
-
         return repos.save(user);
     }
 

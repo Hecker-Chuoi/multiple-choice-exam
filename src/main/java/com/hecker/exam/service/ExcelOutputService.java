@@ -3,17 +3,19 @@ package com.hecker.exam.service;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.hecker.exam.entity.Book;
+import com.hecker.exam.entity.Role;
+import com.hecker.exam.entity.User;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -24,43 +26,69 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelOutputService {
-    public static final int COLUMN_INDEX_ID         = 0;
-    public static final int COLUMN_INDEX_TITLE      = 1;
-    public static final int COLUMN_INDEX_PRICE      = 2;
-    public static final int COLUMN_INDEX_QUANTITY   = 3;
-    public static final int COLUMN_INDEX_TOTAL      = 4;
-    private static CellStyle cellStyleFormatNumber = null;
+    enum ColumnIndex {
+        STT(0),
+        ID(1),
+        USERNAME(2),
+        FULL_NAME(3),
+        DOB(4),
+        GENDER(5),
+        PHONE_NUMBER(6),
+        MAIL(7),
+        UNIT(8),
+        HOMETOWN(9);
 
-    public static void main(String[] args) throws IOException {
-        final List<Book> books = getBooks();
-        final String excelFilePath = "Book2.xlsx";
-        writeExcel(books, excelFilePath);
+        final int index;
+        ColumnIndex(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
-    public static void writeExcel(List<Book> books, String excelFilePath) throws IOException {
+    private static CellStyle cellStyleFormatNumber = null;
+    private static int rowIndex = 0;
+
+    public static void main(String[] args){
+        List<User> users = new ArrayList<>();
+        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+
+        try {
+            writeExcel(users, "public/output.xlsx");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeExcel(List<User> users, String excelFilePath) throws IOException {
         // Create Workbook
         Workbook workbook = getWorkbook(excelFilePath);
 
         // Create sheet
         Sheet sheet = workbook.createSheet("Books"); // Create sheet with sheet name
 
-        int rowIndex = 0;
+        rowIndex = 0;
 
         // Write header
         writeHeader(sheet, rowIndex);
 
         // Write data
         rowIndex++;
-        for (Book book : books) {
+        for (User user : users) {
             // Create row
             Row row = sheet.createRow(rowIndex);
             // Write data on row
-            writeBook(book, row);
+            writeUser(user, row);
             rowIndex++;
         }
 
         // Write footer
-        writeFooter(sheet, rowIndex);
+//        writeFooter(sheet, rowIndex);
 
         // Auto resize column witdth
         int numberOfColumn = sheet.getRow(0).getPhysicalNumberOfCells();
@@ -71,16 +99,16 @@ public class ExcelOutputService {
         System.out.println("Done!!!");
     }
 
-    // Create dummy data
-    private static List<Book> getBooks() {
-        List<Book> listBook = new ArrayList<>();
-        Book book;
-        for (int i = 1; i <= 5; i++) {
-            book = new Book(i, "Book " + i, 5, i * 2, i * 1000);
-            listBook.add(book);
-        }
-        return listBook;
-    }
+//    // Create dummy data
+//    private static List<Book> getBooks() {
+//        List<Book> listBook = new ArrayList<>();
+//        Book book;
+//        for (int i = 1; i <= 5; i++) {
+//            book = new Book(i, "Book " + i, 5, i * 2, i * 1000);
+//            listBook.add(book);
+//        }
+//        return listBook;
+//    }
 
     // Create workbook
     private static Workbook getWorkbook(String excelFilePath) throws IOException {
@@ -106,32 +134,52 @@ public class ExcelOutputService {
         Row row = sheet.createRow(rowIndex);
 
         // Create cells
-        Cell cell = row.createCell(COLUMN_INDEX_ID);
+        Cell cell = row.createCell(ColumnIndex.STT.getIndex());
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Id");
+        cell.setCellValue("STT");
 
-        cell = row.createCell(COLUMN_INDEX_TITLE);
+        cell = row.createCell(ColumnIndex.ID.getIndex());
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Title");
+        cell.setCellValue("Account ID");
 
-        cell = row.createCell(COLUMN_INDEX_PRICE);
+        cell = row.createCell(ColumnIndex.USERNAME.getIndex());
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Price");
+        cell.setCellValue("Tài khoản");
 
-        cell = row.createCell(COLUMN_INDEX_QUANTITY);
+        cell = row.createCell(ColumnIndex.FULL_NAME.getIndex());
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Quantity");
+        cell.setCellValue("Họ và tên");
 
-        cell = row.createCell(COLUMN_INDEX_TOTAL);
+        cell = row.createCell(ColumnIndex.DOB.getIndex());
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Total money");
+        cell.setCellValue("Ngày sinh");
+
+        cell = row.createCell(ColumnIndex.GENDER.getIndex());
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Giới tính");
+
+        cell = row.createCell(ColumnIndex.PHONE_NUMBER.getIndex());
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("SĐT");
+
+        cell = row.createCell(ColumnIndex.MAIL.getIndex());
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Mail");
+
+        cell = row.createCell(ColumnIndex.UNIT.getIndex());
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Đơn vị");
+
+        cell = row.createCell(ColumnIndex.HOMETOWN.getIndex());
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Quê quán");
     }
 
     // Write data
-    private static void writeBook(Book book, Row row) {
+    private static void writeUser(User user, Row row) {
         if (cellStyleFormatNumber == null) {
             // Format number
-            short format = (short)BuiltinFormats.getBuiltinFormat("#,##0");
+            short format = (short) BuiltinFormats.getBuiltinFormat("#,##0");
             // DataFormat df = workbook.createDataFormat();
             // short format = df.getFormat("#,##0");
 
@@ -141,27 +189,44 @@ public class ExcelOutputService {
             cellStyleFormatNumber.setDataFormat(format);
         }
 
-        Cell cell = row.createCell(COLUMN_INDEX_ID);
-        cell.setCellValue(book.getId());
+        Cell cell = row.createCell(ColumnIndex.STT.getIndex());
+        cell.setCellValue(rowIndex);
 
-        cell = row.createCell(COLUMN_INDEX_TITLE);
-        cell.setCellValue(book.getTitle());
+        cell = row.createCell(ColumnIndex.ID.getIndex());
+        cell.setCellValue(user.getUserId());
 
-        cell = row.createCell(COLUMN_INDEX_PRICE);
-        cell.setCellValue(book.getPrice());
-        cell.setCellStyle(cellStyleFormatNumber);
+        cell = row.createCell(ColumnIndex.USERNAME.getIndex());
+        cell.setCellValue(user.getUsername());
 
-        cell = row.createCell(COLUMN_INDEX_QUANTITY);
-        cell.setCellValue(book.getQuantity());
+        cell = row.createCell(ColumnIndex.FULL_NAME.getIndex());
+        cell.setCellValue(user.getFullName());
 
-        // Create cell formula
-        // totalMoney = price * quantity
-        cell = row.createCell(COLUMN_INDEX_TOTAL, CellType.FORMULA);
-        cell.setCellStyle(cellStyleFormatNumber);
-        int currentRow = row.getRowNum() + 1;
-        String columnPrice = CellReference.convertNumToColString(COLUMN_INDEX_PRICE);
-        String columnQuantity = CellReference.convertNumToColString(COLUMN_INDEX_QUANTITY);
-        cell.setCellFormula(columnPrice + currentRow + "*" + columnQuantity + currentRow);
+        cell = row.createCell(ColumnIndex.DOB.getIndex());
+        cell.setCellValue(user.getDob());
+
+        cell = row.createCell(ColumnIndex.GENDER.getIndex());
+        cell.setCellValue(user.getGender());
+
+        cell = row.createCell(ColumnIndex.PHONE_NUMBER.getIndex());
+        cell.setCellValue(user.getPhoneNumber());
+
+        cell = row.createCell(ColumnIndex.MAIL.getIndex());
+        cell.setCellValue(user.getMail());
+
+        cell = row.createCell(ColumnIndex.UNIT.getIndex());
+        cell.setCellValue(user.getUnit());
+
+        cell = row.createCell(ColumnIndex.HOMETOWN.getIndex());
+        cell.setCellValue(user.getHometown());
+
+//        // Create cell formula
+//        // totalMoney = price * quantity
+//        cell = row.createCell(COLUMN_INDEX_TOTAL, CellType.FORMULA);
+//        cell.setCellStyle(cellStyleFormatNumber);
+//        int currentRow = row.getRowNum() + 1;
+//        String columnPrice = CellReference.convertNumToColString(COLUMN_INDEX_PRICE);
+//        String columnQuantity = CellReference.convertNumToColString(COLUMN_INDEX_QUANTITY);
+//        cell.setCellFormula(columnPrice + currentRow + "*" + columnQuantity + currentRow);
     }
 
     // Create CellStyle for header
@@ -183,12 +248,12 @@ public class ExcelOutputService {
     }
 
     // Write footer
-    private static void writeFooter(Sheet sheet, int rowIndex) {
-        // Create row
-        Row row = sheet.createRow(rowIndex);
-        Cell cell = row.createCell(COLUMN_INDEX_TOTAL, CellType.FORMULA);
-        cell.setCellFormula("SUM(E2:E6)");
-    }
+//    private static void writeFooter(Sheet sheet, int rowIndex) {
+//        // Create row
+//        Row row = sheet.createRow(rowIndex);
+//        Cell cell = row.createCell(COLUMN_INDEX_TOTAL, CellType.FORMULA);
+//        cell.setCellFormula("SUM(E2:E6)");
+//    }
 
     // Auto resize column width
     private static void autosizeColumn(Sheet sheet, int lastColumn) {

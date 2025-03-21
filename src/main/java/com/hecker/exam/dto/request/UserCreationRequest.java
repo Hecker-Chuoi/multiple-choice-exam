@@ -14,11 +14,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    @NotBlank(message = "Vui lòng nhập tên đăng nhập")
-    String username;
-    @NotEmpty(message = "Mật khẩu phải dài từ 8 đến 20 ký tự")
-    @Length(min = 8, max = 20, message = "Mật khẩu phải dài từ 8 đến 20 ký tự")
-    String password;
     @NotEmpty(message = "Vui lòng nhập họ và tên")
     String fullName;
     LocalDate dob;
