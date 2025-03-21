@@ -1,0 +1,24 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /exam
+
+spring:
+  application:
+    name: multiple-choice exam
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    show-sql: true
+    properties:
+      hibernate:
+#        format_sql: true
+        use_nationalized_character_data: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;database=multiple_choice_exam;trustServerCertificate=True;
+    username: sa
+    password: root
+
+jwt:
+  secret-key: "2V1jD5V4U7JOAO0XavZU90W2MNaVfcRrdwEzdFejWfvMAFi5dMGoE5CEJAAY9onL"
