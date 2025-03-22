@@ -2,12 +2,10 @@ package com.hecker.exam.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hecker.exam.entity.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,10 +35,11 @@ public class User {
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonIgnore
+    @ToString.Exclude
     List<Test> tests;
 
     @OneToMany(mappedBy = "candidate", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    List<TestResult> takenTests;
+    List<CandidateResult> takenTests;
 
     @ManyToMany(mappedBy = "candidates")
     List<TestSession> assignedSessions;

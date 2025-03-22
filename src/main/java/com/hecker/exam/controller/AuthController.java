@@ -1,7 +1,7 @@
 package com.hecker.exam.controller;
 
-import com.hecker.exam.dto.request.AuthenticationRequest;
-import com.hecker.exam.dto.request.IntrospectRequest;
+import com.hecker.exam.dto.request.auth.AuthenticationRequest;
+import com.hecker.exam.dto.request.auth.IntrospectRequest;
 import com.hecker.exam.dto.response.ApiResponse;
 import com.hecker.exam.dto.response.AuthenticationResponse;
 import com.hecker.exam.dto.response.IntrospectResponse;

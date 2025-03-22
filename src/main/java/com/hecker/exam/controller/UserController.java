@@ -1,15 +1,13 @@
 package com.hecker.exam.controller;
 
-import com.hecker.exam.dto.request.UserCreationRequest;
-import com.hecker.exam.dto.request.UserUpdateRequest;
+import com.hecker.exam.dto.request.auth.UserCreationRequest;
+import com.hecker.exam.dto.request.auth.UserUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
 import com.hecker.exam.entity.User;
 import com.hecker.exam.service.UserService;
 import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

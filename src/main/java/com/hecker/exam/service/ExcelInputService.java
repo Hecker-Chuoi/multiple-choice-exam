@@ -1,18 +1,13 @@
 package com.hecker.exam.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hecker.exam.dto.request.UserCreationRequest;
-import com.hecker.exam.entity.Book;
-import jakarta.validation.constraints.NotEmpty;
+import com.hecker.exam.dto.request.auth.UserCreationRequest;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -21,12 +16,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ExcelInputService {
     public static void main(String[] args) throws IOException {
-        final String excelFilePath = "Book1.xlsx";
+        final String excelFilePath = "input.xlsx";
 //        final List<UserCreationRequest> requests = readUserRequestFromExcel(excelFilePath);
 //        for (UserCreationRequest request : requests) {
 //            System.out.println(request);
@@ -70,36 +64,27 @@ public class ExcelInputService {
                 int columnIndex = cell.getColumnIndex();
                 switch (columnIndex) {
                     case 1:
-                        request.setUsername((String) getCellValue(cell));
-                        break;
-                    case 2:
-                        request.setPassword((String) getCellValue(cell));
-                        break;
-                    case 3:
                         request.setFullName((String) getCellValue(cell));
                         break;
-                    case 4:
+                    case 2:
                         request.setDob(LocalDate.of(1900, 1, 1).plusDays(((Double) getCellValue(cell)).longValue() - 2));
                         break;
-                    case 5:
+                    case 3:
                         request.setGender((String) getCellValue(cell));
                         break;
-                    case 6:
+                    case 4:
                         request.setPhoneNumber((String) getCellValue(cell));
                         break;
-                    case 7:
+                    case 5:
                         request.setMail((String) getCellValue(cell));
                         break;
-                    case 8:
+                    case 6:
                         request.setUnit((String) getCellValue(cell));
                         break;
-                    case 9:
+                    case 7:
                         request.setHometown((String) getCellValue(cell));
                         break;
-                    default:
-                        break;
                 }
-
             }
             listUsers.add(request);
         }

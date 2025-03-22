@@ -1,10 +1,8 @@
-package com.hecker.exam.dto.request;
+package com.hecker.exam.dto.request.auth;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
@@ -14,11 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    @NotBlank(message = "Vui lòng nhập tên đăng nhập")
-    String username;
-    @NotEmpty(message = "Mật khẩu phải dài từ 8 đến 20 ký tự")
-    @Length(min = 8, max = 20, message = "Mật khẩu phải dài từ 8 đến 20 ký tự")
-    String password;
     @NotEmpty(message = "Vui lòng nhập họ và tên")
     String fullName;
     LocalDate dob;

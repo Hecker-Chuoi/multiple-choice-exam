@@ -1,7 +1,7 @@
 package com.hecker.exam.service;
 
-import com.hecker.exam.dto.request.AuthenticationRequest;
-import com.hecker.exam.dto.request.IntrospectRequest;
+import com.hecker.exam.dto.request.auth.AuthenticationRequest;
+import com.hecker.exam.dto.request.auth.IntrospectRequest;
 import com.hecker.exam.dto.response.AuthenticationResponse;
 import com.hecker.exam.dto.response.IntrospectResponse;
 import com.hecker.exam.dto.response.StatusCode;
@@ -20,7 +20,6 @@ import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

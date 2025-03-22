@@ -10,6 +10,9 @@ public enum StatusCode {
     SESSION_NOT_FOUND(103, "Session not found"),
     METHOD_ARGUMENT_NOT_VALID(104, "Method argument not valid"),
     USERNAME_ALREADY_EXISTS(105, "Username already exists"),
+    USER_NOT_FOUND(106, "User not found"),
+    INVALID_NUMBERS_ANSWER(107, "Single choice question must have only one correct answer, multiple choice question must have at least one correct answer"),
+    QUESTION_TYPE_INVALID(108, "Question type must be one of the following: " + "SINGLE_CHOICE, MULTIPLE_CHOICES"),
     UNCATEGORIZED(999, "Uncategorized error");
 
     int code;

@@ -1,4 +1,4 @@
-package com.hecker.exam.dto.request;
+package com.hecker.exam.dto.request.test;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionCreationRequest {
-    String questionText;
-    String explainText;
+public class TestCreationRequest {
+    String testName;
+    String subject;
 }
