@@ -10,6 +10,7 @@ import com.hecker.exam.exception.AppException;
 
 import java.io.IOException;
 
+@Deprecated
 public class QuestionTypeDeserializer extends JsonDeserializer<QuestionType> {
     @Override
     public QuestionType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {

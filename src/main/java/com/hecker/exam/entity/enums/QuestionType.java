@@ -9,17 +9,17 @@ public enum QuestionType {
     SINGLE_CHOICE,
     MULTIPLE_CHOICES;
 
-//    @JsonCreator
-//    public static QuestionType fromString(String value) {
-//        try{
-//            return QuestionType.valueOf(value.toUpperCase());
-//        } catch (IllegalArgumentException e) {
-//            throw new AppException(StatusCode.QUESTION_TYPE_INVALID);
-//        }
-//    }
-//
-//    @JsonValue
-//    public String toJson() {
-//        return name();
-//    }
+    @JsonCreator
+    public static QuestionType fromString(String value) {
+        try{
+            return QuestionType.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new AppException(StatusCode.QUESTION_TYPE_INVALID);
+        }
+    }
+
+    @JsonValue
+    public String toJson() {
+        return name();
+    }
 }
