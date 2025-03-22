@@ -1,6 +1,6 @@
 package com.hecker.exam.repository;
 
-import com.hecker.exam.entity.Role;
+import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

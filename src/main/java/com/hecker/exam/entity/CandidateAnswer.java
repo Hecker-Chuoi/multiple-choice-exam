@@ -10,11 +10,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TestAnswer {
+public class CandidateAnswer {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     long testAnswerId;
     @Column(length = 10)
     String answerChosen;
+
     boolean isCorrect;
 
     @OneToOne
@@ -23,5 +24,5 @@ public class TestAnswer {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "test_result_id", referencedColumnName = "testResultId")
-    TestResult testResult;
+    CandidateResult candidateResult;
 }

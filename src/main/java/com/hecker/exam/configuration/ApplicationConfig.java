@@ -1,6 +1,6 @@
 package com.hecker.exam.configuration;
 
-import com.hecker.exam.entity.Role;
+import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
 import com.hecker.exam.repository.UserRepository;
 import lombok.AccessLevel;

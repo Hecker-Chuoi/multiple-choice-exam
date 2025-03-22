@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TestResult {
+public class CandidateResult {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     long testResultId;
     float timeTaken;
@@ -29,6 +29,6 @@ public class TestResult {
     @JoinColumn(name = "session_id", referencedColumnName = "sessionId")
     TestSession testSession;
 
-    @OneToMany(mappedBy = "testResult", orphanRemoval = true, cascade = CascadeType.ALL)
-    List<TestAnswer> testAnswered;
+    @OneToMany(mappedBy = "candidateResult", orphanRemoval = true, cascade = CascadeType.ALL)
+    List<CandidateAnswer> candidateAnswered;
 }

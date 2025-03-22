@@ -1,4 +1,4 @@
-package com.hecker.exam.dto.request;
+package com.hecker.exam.dto.request.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

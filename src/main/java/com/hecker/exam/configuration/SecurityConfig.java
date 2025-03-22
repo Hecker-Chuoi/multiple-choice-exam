@@ -42,7 +42,9 @@ public class SecurityConfig {
             "/user/candidates",
             "/user",
             "/user/one",
-            "/user/many"
+            "/user/many",
+            "/test",
+            "/test/all"
     };
 
     @NonFinal
@@ -55,14 +57,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(ADMIN_ENDPOINTS).hasRole("ADMIN")
-                        .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
-
-                .formLogin(login -> login
-                        .loginPage("/login"))
-//                .logout(logout -> logout
-//                        .logoutSuccessUrl(""))
 
                 .oauth2ResourceServer(resourceserver
                         -> resourceserver.jwt(jwtConfigurer -> jwtConfigurer

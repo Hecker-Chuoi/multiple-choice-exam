@@ -1,10 +1,8 @@
-package com.hecker.exam.dto.request;
+package com.hecker.exam.dto.request.auth;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 

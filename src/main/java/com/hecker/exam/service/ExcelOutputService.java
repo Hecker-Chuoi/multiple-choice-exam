@@ -7,22 +7,19 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hecker.exam.entity.Book;
-import com.hecker.exam.entity.Role;
+import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelOutputService {
@@ -51,19 +48,19 @@ public class ExcelOutputService {
     private static CellStyle cellStyleFormatNumber = null;
     private static int rowIndex = 0;
 
-    public static void main(String[] args){
-        List<User> users = new ArrayList<>();
-        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
-        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
-        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
-        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
-
-        try {
-            writeExcel(users, "public/output.xlsx");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args){
+//        List<User> users = new ArrayList<>();
+//        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+//        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+//        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+//        users.add(new User(1, "hecker", "423424", "Nguyễn Văn Hải", LocalDate.of(2004, 10, 19), "Nam", "0123456789", "nguyentienht1910@gmail.com", "Phao binh", "Hà Nội", Role.CANDIDATE));
+//
+//        try {
+//            writeExcel(users, "public/output.xlsx");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public static void writeExcel(List<User> users, String excelFilePath) throws IOException {
         // Create Workbook
