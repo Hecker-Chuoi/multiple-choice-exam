@@ -6,6 +6,7 @@ import com.hecker.exam.dto.response.StatusCode;
 import com.hecker.exam.entity.Answer;
 import com.hecker.exam.entity.Question;
 import com.hecker.exam.entity.Test;
+import com.hecker.exam.entity.TestResponse;
 import com.hecker.exam.entity.enums.QuestionType;
 import com.hecker.exam.exception.AppException;
 import com.hecker.exam.mapper.TestMapper;
@@ -17,6 +18,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,33 +30,32 @@ public class TestService {
     UserService userService;
     private final TestRepository testRepository;
 
-    public Test createTest(TestCreationRequest request) {
+    public TestResponse createTest(TestCreationRequest request) {
         Test test = mapper.createTest(request);
         test.setEditedTime(LocalDateTime.now());
         test.setAuthor(userService.getMyInfo());
-        return repos.save(test);
+        return mapper.toResponse(repos.save(test));
     }
 
-    public Test getTest(long testId) {
-        return repos.findById(testId).orElseThrow(() ->
-                new AppException(StatusCode.TEST_NOT_FOUND));
+    public TestResponse getTest(long testId) {
+        return mapper.toResponse(repos.findById(testId).orElseThrow(() ->
+                new AppException(StatusCode.TEST_NOT_FOUND)));
     }
 
-    public List<Test> getTestByDeleted(boolean isDeleted) {
-        return repos.findAllByDeleted(isDeleted);
+    public List<TestResponse> getTestByDeleted(boolean isDeleted) {
+        return mapper.toResponses(repos.findAllByDeleted(isDeleted));
     }
 
-    public List<Test> getAllTests() {
-        return repos.findAll();
+    public List<TestResponse> getAllTests() {
+        return mapper.toResponses(repos.findAll());
     }
 
-    public Test updateTest(long testId, TestCreationRequest request) {
+    public TestResponse updateTest(long testId, TestCreationRequest request) {
         Test test = repos.findById(testId).orElseThrow(() ->
                 new AppException(StatusCode.TEST_NOT_FOUND));
-        test.setTestName(request.getTestName());
-        test.setSubject(request.getSubject());
+        mapper.updateTest(test, request);
         test.setEditedTime(LocalDateTime.now());
-        return repos.save(test);
+        return mapper.toResponse(repos.save(test));
     }
 
     public void deleteTest(long testId) {
@@ -74,8 +75,10 @@ public class TestService {
     }
 
     @Transactional
-    public Test setQuestions(long testId, List<QuestionCreationRequest> requests) {
-        Test test = getTest(testId);
+    public TestResponse setQuestions(long testId, List<QuestionCreationRequest> requests) {
+        Test test = repos.findById(testId).orElseThrow(
+                () -> new AppException(StatusCode.TEST_NOT_FOUND)
+        );
         test.getQuestions().clear();
 
         for(QuestionCreationRequest request : requests){
@@ -100,6 +103,6 @@ public class TestService {
             test.getQuestions().add(question);
         }
 
-        return testRepository.save(test);
+        return mapper.toResponse(testRepository.save(test));
     }
 }

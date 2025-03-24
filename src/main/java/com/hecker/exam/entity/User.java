@@ -21,6 +21,7 @@ import java.util.List;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     long userId;
+    @Column(unique = true)
     String username;
     @JsonIgnore
     String password;
@@ -33,14 +34,12 @@ public class User {
     String hometown;
     Role role; // Candidate, Teacher, Admin
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonIgnore
-    @ToString.Exclude
-    List<Test> tests;
+//    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+//    List<Test> tests;
 
     @OneToMany(mappedBy = "candidate", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     List<CandidateResult> takenTests;
 
-    @ManyToMany(mappedBy = "candidates")
+    @ManyToMany(mappedBy = "candidates", fetch = FetchType.LAZY)
     List<TestSession> assignedSessions;
 }

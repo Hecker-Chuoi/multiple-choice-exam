@@ -1,5 +1,6 @@
 package com.hecker.exam.dto.request.test;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

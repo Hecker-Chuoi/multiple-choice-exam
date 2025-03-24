@@ -3,7 +3,8 @@ package com.hecker.exam.controller;
 import com.hecker.exam.dto.request.auth.UserCreationRequest;
 import com.hecker.exam.dto.request.auth.UserUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
-import com.hecker.exam.entity.User;
+import com.hecker.exam.dto.response.UserResponse;
+import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.service.UserService;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -20,52 +21,53 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService service;
+    UserMapper mapper;
 
     @PostMapping("/one")
-    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.<User>builder()
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+        return ApiResponse.<UserResponse>builder()
                         .result(service.createUser(request))
                         .build();
     }
 
     @PostMapping("/many")
-    public ApiResponse<List<User>> createUsers(@RequestParam("file") MultipartFile file) throws IOException {
-        return ApiResponse.<List<User>>builder()
+    public ApiResponse<List<UserResponse>> createUsers(@RequestParam("file") MultipartFile file) throws IOException {
+        return ApiResponse.<List<UserResponse>>builder()
                 .result(service.createUsersFromExcel(file))
                 .build();
     }
 
     @GetMapping("/{username}")
-    public ApiResponse<User> getUserByUsername(@PathVariable String username) {
-        return ApiResponse.<User>builder()
-                .result(service.getUserByUsername(username))
+    public ApiResponse<UserResponse> getUserByUsername(@PathVariable String username) {
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(service.getUserByUsername(username)))
                 .build();
     }
 
     @GetMapping("/myinfo")
-    public ApiResponse<User> getMyInfo() {
-        return ApiResponse.<User>builder()
-                .result(service.getMyInfo())
+    public ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(service.getMyInfo()))
                 .build();
     }
 
     @GetMapping("/candidates")
-    public ApiResponse<List<User>> getCandidates() {
-        return ApiResponse.<List<User>>builder()
+    public ApiResponse<List<UserResponse>> getCandidates() {
+        return ApiResponse.<List<UserResponse>>builder()
                 .result(service.getCandidates())
                 .build();
     }
 
-    @GetMapping
-    public ApiResponse<List<User>> getAllUsers() {
-        return ApiResponse.<List<User>>builder()
+    @GetMapping("/all")
+    public ApiResponse<List<UserResponse>> getAllUsers() {
+        return ApiResponse.<List<UserResponse>>builder()
                 .result(service.getAllUsers())
                 .build();
     }
 
     @PutMapping("/{username}")
-    public ApiResponse<User> updateUser(@PathVariable String username, @RequestBody UserUpdateRequest request) {
-        return ApiResponse.<User>builder()
+    public ApiResponse<UserResponse> updateUser(@PathVariable String username, @RequestBody UserUpdateRequest request) {
+        return ApiResponse.<UserResponse>builder()
                 .result(service.updateUser(username, request))
                 .build();
     }
@@ -74,7 +76,7 @@ public class UserController {
     public ApiResponse<String> deleteUser(@PathVariable String username) {
         service.deleteUser(username);
         return ApiResponse.<String>builder()
-                .result("User deleted")
+                .result("UserResponse deleted")
                 .build();
     }
 }

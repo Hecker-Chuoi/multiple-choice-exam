@@ -3,6 +3,7 @@ package com.hecker.exam.service;
 import com.hecker.exam.dto.request.auth.UserCreationRequest;
 import com.hecker.exam.dto.request.auth.UserUpdateRequest;
 import com.hecker.exam.dto.response.StatusCode;
+import com.hecker.exam.dto.response.UserResponse;
 import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
 import com.hecker.exam.exception.AppException;
@@ -48,7 +49,7 @@ public class UserService {
         return sb.toString();
     }
 
-    public User createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request) {
         User user = mapper.createUser(request);
         user.setUsername(generateUsername(request.getFullName()));
 
@@ -56,7 +57,7 @@ public class UserService {
         user.setPassword(encoder.encode(request.getDob().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 
         user.setRole(Role.CANDIDATE);
-        return repos.save(user);
+        return mapper.toResponse(repos.save(user));
     }
 
     public User getMyInfo() {
@@ -71,30 +72,35 @@ public class UserService {
         );
     }
 
-    public List<User> getCandidates() {
-        return repos.findByRole(Role.CANDIDATE);
+    public List<UserResponse> getCandidates() {
+        return mapper.toResponses(repos.findByRole(Role.CANDIDATE));
     }
 
-    public List<User> getAllUsers() {
-        return repos.findAll();
+    public List<UserResponse> getAllUsers() {
+        return mapper.toResponses(repos.findAll());
     }
 
     @Transactional
-    public User updateUser(String username, UserUpdateRequest request) {
-        User targetUser = getUserByUsername(username);
-        return repos.save(mapper.updateUser(targetUser, request));
+    public UserResponse updateUser(String username, UserUpdateRequest request) {
+        User targetUser = repos.findByUsername(username).orElseThrow(
+                () -> new AppException(StatusCode.USER_NOT_FOUND)
+        );
+        User newUser = repos.save(mapper.updateUser(targetUser, request));
+        return mapper.toResponse(newUser);
     }
 
     @Transactional
     public void deleteUser(String username) {
-        User targetUser = getUserByUsername(username);
+        User targetUser = repos.findByUsername(username).orElseThrow(
+                () -> new AppException(StatusCode.USER_NOT_FOUND)
+        );
         repos.delete(targetUser);
     }
 
     @Transactional
-    public List<User> createUsersFromExcel(MultipartFile excelFile) throws IOException {
+    public List<UserResponse> createUsersFromExcel(MultipartFile excelFile) throws IOException {
         List<UserCreationRequest> requests = ExcelInputService.readUserRequestFromExcel(excelFile);
-        List<User> result = new ArrayList<>();
+        List<UserResponse> result = new ArrayList<>();
         for (int i = 0; i < requests.size(); ++i) {
             Set<ConstraintViolation<UserCreationRequest>> violations = validator.validate(requests.get(i));
             if(!violations.isEmpty()){
