@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> validationExceptionHandling(MethodArgumentNotValidException exception) {
-        return ResponseEntity.badRequest().body(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .statusCode(StatusCode.METHOD_ARGUMENT_NOT_VALID.getCode())
                         .message(StatusCode.METHOD_ARGUMENT_NOT_VALID.getMessage())

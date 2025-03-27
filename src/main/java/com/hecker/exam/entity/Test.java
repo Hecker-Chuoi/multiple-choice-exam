@@ -1,6 +1,7 @@
 package com.hecker.exam.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Test {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     long testId;
@@ -34,7 +36,5 @@ public class Test {
     User author;
 
     @OneToMany(mappedBy = "test", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonIgnore
-    @ToString.Exclude
     List<Question> questions;
 }

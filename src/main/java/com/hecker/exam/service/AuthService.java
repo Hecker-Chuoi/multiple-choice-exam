@@ -53,13 +53,11 @@ public class AuthService {
 
     public AuthenticationResponse getToken(AuthenticationRequest request) {
         User user = repos.findByUsername(request.getUsername()).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new AppException(StatusCode.USER_NOT_FOUND)
         );
 
         if(!encoder.matches(request.getPassword(), user.getPassword()))
             throw new AppException(StatusCode.UNAUTHENTICATED);
-
-        SecurityContext context = SecurityContextHolder.getContext();
 
         return AuthenticationResponse.builder()
                 .authenticated(true)
@@ -75,7 +73,7 @@ public class AuthService {
                 .issuer("multiple-choice exam")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(3, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .claim("scope", user.getRole().name())
                 .build();
