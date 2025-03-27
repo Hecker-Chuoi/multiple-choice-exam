@@ -28,7 +28,7 @@ public class QuestionCreationRequest {
 //    @NotNull(message = "Question type must be one of the following: + \"SINGLE_CHOICE, MULTIPLE_CHOICE\"")
 //    @ValidQuestionType(message = "Question type must be one of the following: " +
 //            "SINGLE_CHOICE, MULTIPLE_CHOICE")
-    @JsonDeserialize(using = QuestionTypeDeserializer.class)
+//    @JsonDeserialize(using = QuestionTypeDeserializer.class)
     QuestionType questionType;
 
     @Valid

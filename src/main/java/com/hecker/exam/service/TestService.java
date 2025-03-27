@@ -3,6 +3,7 @@ package com.hecker.exam.service;
 import com.hecker.exam.dto.request.test.QuestionCreationRequest;
 import com.hecker.exam.dto.request.test.TestCreationRequest;
 import com.hecker.exam.dto.response.StatusCode;
+import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.entity.Answer;
 import com.hecker.exam.entity.Question;
 import com.hecker.exam.entity.Test;
@@ -28,33 +29,32 @@ public class TestService {
     UserService userService;
     private final TestRepository testRepository;
 
-    public Test createTest(TestCreationRequest request) {
-        Test test = mapper.createTest(request);
+    public TestResponse createTest(TestCreationRequest request) {
+        Test test = mapper.toTest(request);
         test.setEditedTime(LocalDateTime.now());
         test.setAuthor(userService.getMyInfo());
-        return repos.save(test);
+        return mapper.toResponse(repos.save(test));
     }
 
-    public Test getTest(long testId) {
-        return repos.findById(testId).orElseThrow(() ->
-                new AppException(StatusCode.TEST_NOT_FOUND));
+    public TestResponse getTest(long testId) {
+        return mapper.toResponse(repos.findById(testId).orElseThrow(() ->
+                new AppException(StatusCode.TEST_NOT_FOUND)));
     }
 
-    public List<Test> getTestByDeleted(boolean isDeleted) {
-        return repos.findAllByDeleted(isDeleted);
+    public List<TestResponse> getTestByDeleted(boolean isDeleted) {
+        return mapper.toResponses(repos.findAllByDeleted(isDeleted));
     }
 
-    public List<Test> getAllTests() {
-        return repos.findAll();
+    public List<TestResponse> getAllTests() {
+        return mapper.toResponses(repos.findAll());
     }
 
-    public Test updateTest(long testId, TestCreationRequest request) {
+    public TestResponse updateTest(long testId, TestCreationRequest request) {
         Test test = repos.findById(testId).orElseThrow(() ->
                 new AppException(StatusCode.TEST_NOT_FOUND));
-        test.setTestName(request.getTestName());
-        test.setSubject(request.getSubject());
+        mapper.updateTest(test, request);
         test.setEditedTime(LocalDateTime.now());
-        return repos.save(test);
+        return mapper.toResponse(repos.save(test));
     }
 
     public void deleteTest(long testId) {
@@ -73,33 +73,43 @@ public class TestService {
         repos.save(test);
     }
 
+    private Question createQuestion(QuestionCreationRequest request){
+        Question question = mapper.toQuestion(request);
+        List<Answer> answers = mapper.toAnswers(request.getAnswerCreationRequests());
+
+        StringBuilder correctAnswer = new StringBuilder();
+        int cnt = 0;
+        for(Answer answer : answers){
+            if(answer.getIsCorrect()){
+                cnt++;
+            }
+            correctAnswer.append(answer.getIsCorrect() ? "1" : "0");
+        }
+
+        if(question.getQuestionType() == QuestionType.SINGLE_CHOICE && cnt != 1
+        || question.getQuestionType() == QuestionType.MULTIPLE_CHOICES && cnt < 1){
+            throw new AppException(StatusCode.INVALID_NUMBERS_ANSWER);
+        }
+        answers.forEach(x -> x.setQuestion(question));
+        question.setAnswers(answers);
+        question.setCorrectAnswer(correctAnswer.toString());
+
+        return question;
+    }
+
     @Transactional
-    public Test setQuestions(long testId, List<QuestionCreationRequest> requests) {
-        Test test = getTest(testId);
+    public TestResponse setQuestions(long testId, List<QuestionCreationRequest> requests) {
+        Test test = repos.findById(testId).orElseThrow(
+                () -> new AppException(StatusCode.TEST_NOT_FOUND)
+        );
         test.getQuestions().clear();
 
         for(QuestionCreationRequest request : requests){
-            Question question = mapper.createQuestion(request);
-            List<Answer> answers = mapper.createAnswers(request.getAnswerCreationRequests());
-
-            int correctAnswer = 0;
-            for(Answer answer : answers){
-                if(answer.getIsCorrect()){
-                    correctAnswer++;
-                }
-            }
-
-            if(question.getQuestionType() == QuestionType.SINGLE_CHOICE && correctAnswer != 1
-            || question.getQuestionType() == QuestionType.MULTIPLE_CHOICES && correctAnswer < 1){
-                throw new AppException(StatusCode.INVALID_NUMBERS_ANSWER);
-            }
-            answers.forEach(x -> x.setQuestion(question));
-
+            Question question = createQuestion(request);
             question.setTest(test);
-            question.setAnswers(answers);
             test.getQuestions().add(question);
         }
 
-        return testRepository.save(test);
+        return mapper.toResponse(testRepository.save(test));
     }
 }

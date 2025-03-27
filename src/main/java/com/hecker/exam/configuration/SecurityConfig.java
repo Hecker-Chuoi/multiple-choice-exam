@@ -7,29 +7,26 @@ import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
@@ -38,13 +35,37 @@ public class SecurityConfig {
             "/auth/introspect"
     };
 
+    String[] AUTHENTICATED_ENDPOINTS = {
+            "/user/myInfo"
+    };
+
+    String[] USER_ENDPOINTS = {
+            "/user/myInfo/takenTests",
+            "/user/myInfo/assignedSessions",
+            "/taking-test/{sessionId}/start",
+            "/taking-test/{sessionId}/save-progress",
+            "/taking-test/{sessionId}/submit",
+            "/taking-test/{sessionId}/result",
+    };
+
     String[] ADMIN_ENDPOINTS = {
-            "/user/candidates",
-            "/user",
             "/user/one",
             "/user/many",
+            "/user/{username}",
+            "/user/candidates",
+            "/user/all",
+            "/user/{username}/assignedSessions",
+            "/user/{username}/assignedSessions",
             "/test",
-            "/test/all"
+            "/test/all",
+            "/test/valid",
+            "/test/{testId}",
+            "/test/{testId}/questions",
+            "/session",
+            "/session/{sessionId}",
+            "/session/all",
+            "/session/{sessionId}/test",
+            "/session/{sessionId}/candidates"
     };
 
     @NonFinal
@@ -54,20 +75,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                 .cors(cors -> cors.configure(httpSecurity))
+
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(AUTHENTICATED_ENDPOINTS).hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(USER_ENDPOINTS).hasRole("USER")
                         .requestMatchers(ADMIN_ENDPOINTS).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
 
-                .oauth2ResourceServer(resourceserver
-                        -> resourceserver.jwt(jwtConfigurer -> jwtConfigurer
+                .oauth2ResourceServer(resourceServer
+                        -> resourceServer.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(decoder())
                         .jwtAuthenticationConverter(converter())))
 
                 .csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:8082")  // Chỉ định origin frontend
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
     }
 
     private JwtDecoder decoder() {

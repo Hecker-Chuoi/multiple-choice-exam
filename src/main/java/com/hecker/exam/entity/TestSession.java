@@ -1,5 +1,9 @@
 package com.hecker.exam.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.hecker.exam.utils.DurationSerializer;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,19 +21,28 @@ import java.util.List;
 public class TestSession {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     long sessionId;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm", shape = JsonFormat.Shape.STRING)
     LocalDateTime lastEditTime;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm", shape = JsonFormat.Shape.STRING)
     LocalDateTime startTime;
+    @JsonSerialize(using = DurationSerializer.class)
     Duration timeLimit;
+    @Builder.Default
+    boolean isDeleted = false;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id", referencedColumnName = "testId")
+    @JsonIgnore
+    @ToString.Exclude
     Test test;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "test_candidate_assign",
         joinColumns = @JoinColumn(name = "session_id", referencedColumnName = "sessionId"),
         inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId")
     )
+    @JsonIgnore
+    @ToString.Exclude
     List<User> candidates;
 }
