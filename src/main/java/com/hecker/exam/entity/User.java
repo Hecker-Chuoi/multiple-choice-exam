@@ -38,8 +38,12 @@ public class User {
 //    List<Test> tests;
 
     @OneToMany(mappedBy = "candidate", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     List<CandidateResult> takenTests;
 
     @ManyToMany(mappedBy = "candidates", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JsonIgnore
     List<TestSession> assignedSessions;
 }

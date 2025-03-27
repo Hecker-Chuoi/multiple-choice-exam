@@ -1,11 +1,8 @@
-package com.hecker.exam.entity;
+package com.hecker.exam.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import com.hecker.exam.entity.Question;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;

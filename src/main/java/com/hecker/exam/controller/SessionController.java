@@ -3,10 +3,9 @@ package com.hecker.exam.controller;
 import com.hecker.exam.dto.request.session.SessionCreationRequest;
 import com.hecker.exam.dto.request.session.SessionUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
+import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.dto.response.UserResponse;
-import com.hecker.exam.entity.TestResponse;
 import com.hecker.exam.entity.TestSession;
-import com.hecker.exam.entity.User;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.service.SessionService;
 import lombok.AccessLevel;
@@ -82,7 +81,7 @@ public class SessionController {
     }
 
     @PostMapping("/{sessionId}/candidates")
-    public ApiResponse<String> candidateAssign(@PathVariable long sessionId, @RequestBody List<String> candidateIds){
-        return service.candidateAssign(sessionId, candidateIds);
+    public ApiResponse<String> candidateAssign(@PathVariable long sessionId, @RequestBody List<String> candidateUsernames){
+        return service.candidateAssign(sessionId, candidateUsernames);
     }
 }

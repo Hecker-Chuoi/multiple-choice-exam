@@ -5,6 +5,7 @@ import com.hecker.exam.dto.request.auth.UserUpdateRequest;
 import com.hecker.exam.dto.response.UserResponse;
 import com.hecker.exam.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;

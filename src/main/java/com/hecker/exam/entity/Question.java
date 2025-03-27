@@ -22,6 +22,10 @@ public class Question {
     String questionText;
     @Length(max = 4000)
     String explainText;
+    @Column(length = 10)
+    @JsonIgnore
+    @ToString.Exclude
+    String correctAnswer; // 0 for un selected, 1 for selected
     @Enumerated(EnumType.STRING)
     QuestionType questionType;
 

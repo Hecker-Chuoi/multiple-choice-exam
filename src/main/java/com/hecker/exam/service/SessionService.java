@@ -4,8 +4,8 @@ import com.hecker.exam.dto.request.session.SessionCreationRequest;
 import com.hecker.exam.dto.request.session.SessionUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
 import com.hecker.exam.dto.response.StatusCode;
+import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.entity.Test;
-import com.hecker.exam.entity.TestResponse;
 import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.entity.User;
 import com.hecker.exam.entity.enums.Role;
@@ -50,7 +50,7 @@ public class SessionService {
         return repo.save(session);
     }
 
-    public TestSession getSession(long sessionId){
+    public TestSession getSession(Long sessionId){
         return repo.findById(sessionId).orElseThrow(() ->
                 new AppException(StatusCode.SESSION_NOT_FOUND));
     }
@@ -95,7 +95,7 @@ public class SessionService {
         List<User> candidates = new ArrayList<>();
         for(String username : usernames){
             Optional<User> candidate = candidateRepo.findByUsername(username);
-            if(candidate.isPresent() && candidate.get().getRole().equals(Role.CANDIDATE)){
+            if(candidate.isPresent() && candidate.get().getRole().equals(Role.USER)){
                 candidates.add(candidate.get());
             } else {
                 result.add(username);

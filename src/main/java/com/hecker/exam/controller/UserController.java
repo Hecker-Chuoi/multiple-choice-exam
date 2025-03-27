@@ -3,7 +3,10 @@ package com.hecker.exam.controller;
 import com.hecker.exam.dto.request.auth.UserCreationRequest;
 import com.hecker.exam.dto.request.auth.UserUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
+import com.hecker.exam.dto.response.ResultResponse;
 import com.hecker.exam.dto.response.UserResponse;
+import com.hecker.exam.entity.TestSession;
+import com.hecker.exam.mapper.CandidateResultMapper;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.service.UserService;
 import jakarta.validation.Valid;
@@ -22,6 +25,7 @@ import java.util.List;
 public class UserController {
     UserService service;
     UserMapper mapper;
+    CandidateResultMapper resultMapper;
 
     @PostMapping("/one")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
@@ -44,10 +48,38 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/myinfo")
+    @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(service.getMyInfo()))
+                .build();
+    }
+
+    @GetMapping("/myInfo/takenTests")
+    public ApiResponse<List<ResultResponse>> getMyTakenTests() {
+        return ApiResponse.<List<ResultResponse>>builder()
+                .result(resultMapper.toResponses(service.getTakenTests()))
+                .build();
+    }
+
+    @GetMapping("/myInfo/assignedSessions")
+    public ApiResponse<List<TestSession>> getMyAssignedSessions() {
+        return ApiResponse.<List<TestSession>>builder()
+                .result(service.getAssignedSessions())
+                .build();
+    }
+
+    @GetMapping("/{username}/assignedSessions")
+    public ApiResponse<List<TestSession>> getUserAssignedSessions(@PathVariable("username") String username) {
+        return ApiResponse.<List<TestSession>>builder()
+                .result(service.getAssignedSessions(username))
+                .build();
+    }
+
+    @GetMapping("/{username}/takenTests")
+    public ApiResponse<List<ResultResponse>> getUserTakenTests(@PathVariable("username") String username) {
+        return ApiResponse.<List<ResultResponse>>builder()
+                .result(resultMapper.toResponses(service.getTakenTests(username)))
                 .build();
     }
 

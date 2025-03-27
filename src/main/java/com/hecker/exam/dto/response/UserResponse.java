@@ -1,15 +1,13 @@
 package com.hecker.exam.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hecker.exam.entity.CandidateResult;
 import com.hecker.exam.entity.Test;
 import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.entity.enums.Role;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -26,10 +24,13 @@ public class UserResponse {
     long userId;
     String username;
     String fullName;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate dob;
     String gender;
     String phoneNumber;
     String mail;
     String unit; // Đơn vị trong quân đội
+    @Enumerated(EnumType.STRING)
+    Role role;
     String hometown;
 }

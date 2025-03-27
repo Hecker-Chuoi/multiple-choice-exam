@@ -2,11 +2,15 @@ package com.hecker.exam.service;
 
 import com.hecker.exam.dto.request.auth.UserCreationRequest;
 import com.hecker.exam.dto.request.auth.UserUpdateRequest;
+import com.hecker.exam.dto.response.ResultResponse;
 import com.hecker.exam.dto.response.StatusCode;
 import com.hecker.exam.dto.response.UserResponse;
+import com.hecker.exam.entity.CandidateResult;
+import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
 import com.hecker.exam.exception.AppException;
+import com.hecker.exam.mapper.CandidateResultMapper;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -23,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.transform.Result;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -37,6 +42,7 @@ public class UserService {
     UserRepository repos;
     UserMapper mapper;
     Validator validator;
+    PasswordEncoder encoder;
 
     private String generateUsername(String fullName) {
         StringBuilder sb = new StringBuilder();
@@ -53,17 +59,18 @@ public class UserService {
         User user = mapper.createUser(request);
         user.setUsername(generateUsername(request.getFullName()));
 
-        PasswordEncoder encoder = new BCryptPasswordEncoder(10);
         user.setPassword(encoder.encode(request.getDob().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 
-        user.setRole(Role.CANDIDATE);
+        user.setRole(Role.USER);
         return mapper.toResponse(repos.save(user));
     }
 
     public User getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return getUserByUsername(username);
+        return repos.findByUsername(username).orElseThrow(
+                () -> new AppException(StatusCode.USER_NOT_FOUND)
+        );
     }
 
     public User getUserByUsername(String username) {
@@ -73,11 +80,31 @@ public class UserService {
     }
 
     public List<UserResponse> getCandidates() {
-        return mapper.toResponses(repos.findByRole(Role.CANDIDATE));
+        return mapper.toResponses(repos.findByRole(Role.USER));
     }
 
     public List<UserResponse> getAllUsers() {
         return mapper.toResponses(repos.findAll());
+    }
+
+    public List<CandidateResult> getTakenTests() {
+        User user = getMyInfo();
+        return user.getTakenTests();
+    }
+
+    public List<CandidateResult> getTakenTests(String username) {
+        User user = getUserByUsername(username);
+        return user.getTakenTests();
+    }
+
+    public List<TestSession> getAssignedSessions() {
+        User user = getMyInfo();
+        return user.getAssignedSessions();
+    }
+
+    public List<TestSession> getAssignedSessions(String username) {
+        User user = getUserByUsername(username);
+        return user.getAssignedSessions();
     }
 
     @Transactional
@@ -85,8 +112,10 @@ public class UserService {
         User targetUser = repos.findByUsername(username).orElseThrow(
                 () -> new AppException(StatusCode.USER_NOT_FOUND)
         );
-        User newUser = repos.save(mapper.updateUser(targetUser, request));
-        return mapper.toResponse(newUser);
+        User newUser = mapper.updateUser(targetUser, request);
+        newUser.setPassword(encoder.encode(request.getDob().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+
+        return mapper.toResponse(repos.save(newUser));
     }
 
     @Transactional
