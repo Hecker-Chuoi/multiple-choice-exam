@@ -20,5 +20,17 @@ spring:
     username: sa
     password: root
 
+
+springdoc:
+  info:
+    title: Multiple Choice Exam
+    description: Multiple Choice Exam
+    version: 1.0.0
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    groups-order: asc
+
 jwt:
   secret-key: "2V1jD5V4U7JOAO0XavZU90W2MNaVfcRrdwEzdFejWfvMAFi5dMGoE5CEJAAY9onL"

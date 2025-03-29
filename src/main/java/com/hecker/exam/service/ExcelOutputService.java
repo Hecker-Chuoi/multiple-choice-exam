@@ -202,7 +202,7 @@ public class ExcelOutputService {
         cell.setCellValue(user.getDob());
 
         cell = row.createCell(ColumnIndex.GENDER.getIndex());
-        cell.setCellValue(user.getGender());
+        cell.setCellValue(user.getGender().name());
 
         cell = row.createCell(ColumnIndex.PHONE_NUMBER.getIndex());
         cell.setCellValue(user.getPhoneNumber());
@@ -211,7 +211,7 @@ public class ExcelOutputService {
         cell.setCellValue(user.getMail());
 
         cell = row.createCell(ColumnIndex.UNIT.getIndex());
-        cell.setCellValue(user.getUnit());
+        cell.setCellValue(user.getType().name());
 
         cell = row.createCell(ColumnIndex.HOMETOWN.getIndex());
         cell.setCellValue(user.getHometown());

@@ -6,6 +6,7 @@ import com.hecker.exam.dto.response.ApiResponse;
 import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.entity.Question;
 import com.hecker.exam.service.TestService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@SecurityRequirement(name = "bearer-jwt")
 public class TestController {
     TestService service;
 

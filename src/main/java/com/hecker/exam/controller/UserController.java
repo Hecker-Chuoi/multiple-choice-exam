@@ -1,14 +1,16 @@
 package com.hecker.exam.controller;
 
-import com.hecker.exam.dto.request.auth.UserCreationRequest;
-import com.hecker.exam.dto.request.auth.UserUpdateRequest;
+import com.hecker.exam.dto.request.user.UserCreationRequest;
+import com.hecker.exam.dto.request.user.UserUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
 import com.hecker.exam.dto.response.ResultResponse;
 import com.hecker.exam.dto.response.UserResponse;
 import com.hecker.exam.entity.TestSession;
+import com.hecker.exam.entity.User;
 import com.hecker.exam.mapper.CandidateResultMapper;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +24,7 @@ import java.util.List;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@SecurityRequirement(name = "bearer-jwt")
 public class UserController {
     UserService service;
     UserMapper mapper;
@@ -29,22 +32,41 @@ public class UserController {
 
     @PostMapping("/one")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+        User res = service.createUser(request);
         return ApiResponse.<UserResponse>builder()
-                        .result(service.createUser(request))
+                        .result(mapper.toResponse(res))
                         .build();
     }
 
     @PostMapping("/many")
     public ApiResponse<List<UserResponse>> createUsers(@RequestParam("file") MultipartFile file) throws IOException {
+        List<User> users = service.createUsersFromExcel(file);
         return ApiResponse.<List<UserResponse>>builder()
-                .result(service.createUsersFromExcel(file))
+                .result(mapper.toResponses(users))
                 .build();
     }
 
     @GetMapping("/{username}")
     public ApiResponse<UserResponse> getUserByUsername(@PathVariable String username) {
+        User user = service.getUserByUsername(username);
         return ApiResponse.<UserResponse>builder()
-                .result(mapper.toResponse(service.getUserByUsername(username)))
+                .result(mapper.toResponse(user))
+                .build();
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<List<UserResponse>> getUsers() {
+        List<User> users = service.getUsers();
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(mapper.toResponses(users))
+                .build();
+    }
+
+    @GetMapping("/type")
+    public ApiResponse<List<UserResponse>> getUsersByType(@RequestBody String[] type) {
+        List<User> users = service.getUsersByTypes(type);
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(mapper.toResponses(users))
                 .build();
     }
 
@@ -83,24 +105,11 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/candidates")
-    public ApiResponse<List<UserResponse>> getCandidates() {
-        return ApiResponse.<List<UserResponse>>builder()
-                .result(service.getCandidates())
-                .build();
-    }
-
-    @GetMapping("/all")
-    public ApiResponse<List<UserResponse>> getAllUsers() {
-        return ApiResponse.<List<UserResponse>>builder()
-                .result(service.getAllUsers())
-                .build();
-    }
-
     @PutMapping("/{username}")
     public ApiResponse<UserResponse> updateUser(@PathVariable String username, @RequestBody UserUpdateRequest request) {
+        User user = service.updateUser(username, request);
         return ApiResponse.<UserResponse>builder()
-                .result(service.updateUser(username, request))
+                .result(mapper.toResponse(user))
                 .build();
     }
 

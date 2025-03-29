@@ -2,7 +2,9 @@ package com.hecker.exam.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hecker.exam.entity.enums.Gender;
 import com.hecker.exam.entity.enums.Role;
+import com.hecker.exam.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,19 +25,20 @@ public class User {
     long userId;
     @Column(unique = true)
     String username;
-    @JsonIgnore
     String password;
     String fullName;
     LocalDate dob;
-    String gender;
+    @Enumerated(EnumType.STRING)
+    Gender gender;
     String phoneNumber;
     String mail;
-    String unit; // Đơn vị trong quân đội
+    @Enumerated(EnumType.STRING)
+    Type type;
     String hometown;
-    Role role; // Candidate, Teacher, Admin
-
-//    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-//    List<Test> tests;
+    @Enumerated(EnumType.STRING)
+    Role role;
+    @Builder.Default
+    Boolean isDeleted = false;
 
     @OneToMany(mappedBy = "candidate", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @ToString.Exclude

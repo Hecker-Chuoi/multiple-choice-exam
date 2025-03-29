@@ -8,6 +8,7 @@ import com.hecker.exam.dto.response.UserResponse;
 import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.service.SessionService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/session")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@SecurityRequirement(name = "bearer-jwt")
 public class SessionController {
     SessionService service;
     UserMapper userMapper;

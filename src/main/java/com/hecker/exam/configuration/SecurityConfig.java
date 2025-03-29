@@ -78,6 +78,7 @@ public class SecurityConfig {
                  .cors(cors -> cors.configure(httpSecurity))
 
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(AUTHENTICATED_ENDPOINTS).hasAnyRole("ADMIN", "USER")
                         .requestMatchers(USER_ENDPOINTS).hasRole("USER")
@@ -101,7 +102,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8082")  // Chỉ định origin frontend
+                        .allowedOrigins("http://localhost")  // Chỉ định origin frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

@@ -1,8 +1,10 @@
 package com.hecker.exam.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
+@Schema(description = "Status code and message", enumAsRef = true)
 public enum StatusCode {
     SUCCESS(100, "Success"),
     UNAUTHENTICATED(101, "Unauthenticated"),
@@ -23,6 +25,9 @@ public enum StatusCode {
     QUESTION_NOT_FOUND(116, "Question not found"),
     ALREADY_STARTED(117, "You have already started the test"),
     TEST_COMPLETED(118, "Test has been completed"),
+    USER_TYPE_INVALID(119, "User type must be one of the following: " + "SOLDIER, OFFICER, PROFESSIONAL"),
+    GENDER_INVALID(120, "Gender must be MALE, FEMALE or OTHER"),
+    DATE_FORMAT_INVALID(121, "Date format must be 'dd/MM/yyyy'"),
     UNCATEGORIZED(999, "Uncategorized error");
 
     int code;

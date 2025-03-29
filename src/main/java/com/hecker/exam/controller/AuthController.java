@@ -7,6 +7,10 @@ import com.hecker.exam.dto.response.AuthenticationResponse;
 import com.hecker.exam.dto.response.IntrospectResponse;
 import com.hecker.exam.service.AuthService;
 import com.nimbusds.jose.JOSEException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +25,18 @@ import java.text.ParseException;
 public class AuthController {
     AuthService service;
 
+    @Operation(summary = "Get token", description = "Get token by username and password")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {
+                    @ExampleObject(value = "{\"username\":\"admin\",\"password\":\"admin\"}", name = "admin"),
+                    @ExampleObject(value = "{\"username\":\"user\",\"password\":\"user\"}", name = "user")
+            }
+    ))
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Token received"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Bad request"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> getToken(@RequestBody AuthenticationRequest request) {
         return ApiResponse.<AuthenticationResponse>builder()
