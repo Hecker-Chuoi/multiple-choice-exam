@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.Session;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,20 +94,10 @@ public class UserController {
 
     @Operation(summary = "07. Get my taken tests")
     @SecurityRequirement(name = "user-token")
-    @GetMapping("/takenTests/{status}")
-    public ApiResponse<List<ResultResponse>> getMyTakenTests(@PathVariable(required = false) String status) {
+    @GetMapping("/assigned-session/{status}")
+    public ApiResponse<List<ResultResponse>> getMyAssignedSession(@PathVariable(required = false) String status) {
         return ApiResponse.<List<ResultResponse>>builder()
-                .result(resultMapper.toResponses(service.getTakenTests(status)))
-                .build();
-    }
-
-    @Operation(summary = "08. Get my assigned sessions")
-    @SecurityRequirement(name = "user-token")
-    @GetMapping("/assignedSessions")
-    public ApiResponse<List<SessionResponse>> getMyAssignedSessions() {
-        List<TestSession> results = service.getAssignedSessions();
-        return ApiResponse.<List<SessionResponse>>builder()
-                .result(sessionMapper.toResponses(results))
+                .result(resultMapper.toResponses(service.getMyTakenTests(status)))
                 .build();
     }
 
@@ -122,21 +111,12 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "10. Get user's assigned session")
-    @SecurityRequirement(name = "admin-token")
-    @GetMapping("/{username}/assignedSessions")
-    public ApiResponse<List<TestSession>> getUserAssignedSessions(@PathVariable("username") String username) {
-        return ApiResponse.<List<TestSession>>builder()
-                .result(service.getAssignedSessions(username))
-                .build();
-    }
-
     @Operation(summary = "11. Get user's taken tests")
     @SecurityRequirement(name = "admin-token")
-    @GetMapping("/{username}/takenTests")
-    public ApiResponse<List<ResultResponse>> getUserTakenTests(@PathVariable("username") String username) {
+    @GetMapping("/{username}/assigned-session/{status}")
+    public ApiResponse<List<ResultResponse>> getUserAssignedSession(@PathVariable("username") String username, @PathVariable(required = false) String status) {
         return ApiResponse.<List<ResultResponse>>builder()
-                .result(resultMapper.toResponses(service.getTakenTests(username)))
+                .result(resultMapper.toResponses(service.getUserTakenTests(username, status)))
                 .build();
     }
 

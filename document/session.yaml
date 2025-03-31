@@ -1,0 +1,538 @@
+openapi: 3.1.0
+info:
+  description: Multiple Choice Exam
+  title: Multiple Choice Exam
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/exam'
+    description: Generated server url
+paths:
+  /session:
+    post:
+      operationId: createSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionCreationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseSessionResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  /session/all:
+    get:
+      operationId: getAllSessions
+      parameters:
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+            default: startTime
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListSessionResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  '/session/{sessionId}':
+    delete:
+      operationId: deleteSession
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+    get:
+      operationId: getSession
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseSessionResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+    put:
+      operationId: updateSession
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionUpdateRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseSessionResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  '/session/{sessionId}/candidates':
+    get:
+      operationId: getCandidates
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+    post:
+      operationId: candidateAssignByUsernames
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  '/session/{sessionId}/questions':
+    get:
+      operationId: getQuestions
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListQuestion'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  '/session/{sessionId}/results':
+    get:
+      operationId: getCandidateResults
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListCandidateResult'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  '/session/{sessionId}/test':
+    get:
+      operationId: getTest
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseTestResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+    put:
+      operationId: changeTest
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int64
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseSessionResponse'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+  '/session/{sessionId}/types':
+    post:
+      operationId: candidateAssignByTypes
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - admin-token: []
+      tags:
+        - session-controller
+components:
+  schemas:
+    Answer:
+      type: object
+      properties:
+        answerId:
+          type: integer
+          format: int64
+        answerText:
+          type: string
+        isCorrect:
+          type: boolean
+    ApiResponseListCandidateResult:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateResult'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseListQuestion:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseListSessionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseListUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseSessionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/SessionResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: string
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseTestResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/TestResponse'
+        statusCode:
+          type: integer
+          format: int32
+    CandidateAnswer:
+      type: object
+      properties:
+        answerChosen:
+          type: string
+        correct:
+          type: boolean
+        testAnswerId:
+          type: integer
+          format: int64
+    CandidateResult:
+      type: object
+      properties:
+        candidateAnswered:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateAnswer'
+        score:
+          type: number
+          format: float
+        status:
+          type: string
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - COMPLETED
+        submitAt:
+          type: string
+          format: date-time
+        testResultId:
+          type: integer
+          format: int64
+        timeTaken:
+          type: number
+          format: float
+    Question:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        explainText:
+          type: string
+        questionId:
+          type: integer
+          format: int64
+        questionText:
+          type: string
+        questionType:
+          type: string
+          enum:
+            - SINGLE_CHOICE
+            - MULTIPLE_CHOICES
+    SessionCreationRequest:
+      type: object
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        testId:
+          type: integer
+          format: int64
+        timeLimit:
+          type: string
+          example: PT2H30M
+      required:
+        - testId
+    SessionResponse:
+      type: object
+      properties:
+        candidateCount:
+          type: integer
+          format: int32
+        isDeleted:
+          type: boolean
+        lastEditTime:
+          type: string
+          format: date-time
+        sessionId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        testId:
+          type: integer
+          format: int64
+        timeLimit:
+          type: string
+          example: PT2H30M
+    SessionUpdateRequest:
+      type: object
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        timeLimit:
+          type: string
+          example: PT2H30M
+    TestResponse:
+      type: object
+      properties:
+        editedTime:
+          type: string
+          format: date-time
+        isDeleted:
+          type: boolean
+        questionCount:
+          type: integer
+          format: int32
+        subject:
+          type: string
+        testId:
+          type: integer
+          format: int64
+        testName:
+          type: string
+    UserResponse:
+      type: object
+      properties:
+        dob:
+          type: string
+          format: date
+        fullName:
+          type: string
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - OTHER
+        hometown:
+          type: string
+        mail:
+          type: string
+        phoneNumber:
+          type: string
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+        type:
+          type: string
+          enum:
+            - Chiến sĩ
+            - Sĩ quan
+            - Chuyên nghiệp
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+  securitySchemes:
+    admin-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    user-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

@@ -1,0 +1,464 @@
+openapi: 3.1.0
+info:
+  description: Multiple Choice Exam
+  title: Multiple Choice Exam
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/exam'
+    description: Generated server url
+paths:
+  /user/all:
+    get:
+      operationId: getUsers
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 04. Get all users
+      tags:
+        - user-controller
+  '/user/assigned-session/{status}':
+    get:
+      operationId: getMyAssignedSession
+      parameters:
+        - in: path
+          name: status
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListResultResponse'
+          description: OK
+      security:
+        - user-token: []
+      summary: 07. Get my taken tests
+      tags:
+        - user-controller
+  /user/many:
+    post:
+      operationId: createUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 02. Create users
+      tags:
+        - user-controller
+  /user/myInfo:
+    get:
+      operationId: getMyInfo
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserResponse'
+          description: OK
+      security:
+        - user-token: []
+      summary: 06. Get current logged in user
+      tags:
+        - user-controller
+  /user/one:
+    post:
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 01. Create user
+      tags:
+        - user-controller
+  /user/type:
+    get:
+      operationId: getUsersByType
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 05. Get users by type
+      tags:
+        - user-controller
+  /user/upcomingSessions:
+    get:
+      operationId: getUpcomingSession
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListSessionResponse'
+          description: OK
+      security:
+        - user-token: []
+      summary: 09. Get my upcoming session
+      tags:
+        - user-controller
+  '/user/{username}':
+    delete:
+      operationId: deleteUser
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 13. Delete user
+      tags:
+        - user-controller
+    get:
+      operationId: getUserByUsername
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 03. Get user by username
+      tags:
+        - user-controller
+    put:
+      operationId: updateUser
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 12. Update user
+      tags:
+        - user-controller
+  '/user/{username}/assigned-session/{status}':
+    get:
+      operationId: getUserAssignedSession
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: status
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListResultResponse'
+          description: OK
+      security:
+        - admin-token: []
+      summary: 11. Get user's taken tests
+      tags:
+        - user-controller
+components:
+  schemas:
+    ApiResponseListResultResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseListSessionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseListUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: string
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/UserResponse'
+        statusCode:
+          type: integer
+          format: int32
+    CandidateAnswer:
+      type: object
+      properties:
+        answerChosen:
+          type: string
+        correct:
+          type: boolean
+        testAnswerId:
+          type: integer
+          format: int64
+    ResultResponse:
+      type: object
+      properties:
+        candidateAnswered:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateAnswer'
+        candidateId:
+          type: integer
+          format: int64
+        score:
+          type: number
+          format: float
+        sessionId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - COMPLETED
+        submitAt:
+          type: string
+          format: date-time
+        testResultId:
+          type: integer
+          format: int64
+        timeTaken:
+          type: number
+          format: float
+    SessionResponse:
+      type: object
+      properties:
+        candidateCount:
+          type: integer
+          format: int32
+        isDeleted:
+          type: boolean
+        lastEditTime:
+          type: string
+          format: date-time
+        sessionId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        testId:
+          type: integer
+          format: int64
+        timeLimit:
+          type: string
+          example: PT2H30M
+    UserCreationRequest:
+      type: object
+      properties:
+        dob:
+          type: string
+          format: date
+        fullName:
+          type: string
+          minLength: 1
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - OTHER
+        hometown:
+          type: string
+        mail:
+          type: string
+        phoneNumber:
+          type: string
+        type:
+          type: string
+          enum:
+            - Chiến sĩ
+            - Sĩ quan
+            - Chuyên nghiệp
+      required:
+        - dob
+        - gender
+        - type
+    UserResponse:
+      type: object
+      properties:
+        dob:
+          type: string
+          format: date
+        fullName:
+          type: string
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - OTHER
+        hometown:
+          type: string
+        mail:
+          type: string
+        phoneNumber:
+          type: string
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+        type:
+          type: string
+          enum:
+            - Chiến sĩ
+            - Sĩ quan
+            - Chuyên nghiệp
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+    UserUpdateRequest:
+      type: object
+      properties:
+        dob:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - OTHER
+        hometown:
+          type: string
+        mail:
+          type: string
+        phoneNumber:
+          type: string
+        type:
+          type: string
+          enum:
+            - Chiến sĩ
+            - Sĩ quan
+            - Chuyên nghiệp
+      required:
+        - dob
+        - gender
+        - type
+  securitySchemes:
+    admin-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    user-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

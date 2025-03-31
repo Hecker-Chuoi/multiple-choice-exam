@@ -1,0 +1,116 @@
+openapi: 3.1.0
+info:
+  description: Multiple Choice Exam
+  title: Multiple Choice Exam
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/exam'
+    description: Generated server url
+paths:
+  /auth/introspect:
+    post:
+      operationId: introspect
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntrospectRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseIntrospectResponse'
+          description: OK
+      tags:
+        - auth-controller
+  /auth/token:
+    post:
+      description: Get token by username and password
+      operationId: getToken
+      requestBody:
+        content:
+          application/json:
+            examples:
+              admin:
+                description: admin
+                value:
+                  username: admin
+                  password: admin
+              user:
+                description: user
+                value:
+                  username: user
+                  password: user
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseAuthenticationResponse'
+          description: Token received
+      summary: Get token
+      tags:
+        - auth-controller
+components:
+  schemas:
+    ApiResponseAuthenticationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/AuthenticationResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseIntrospectResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/IntrospectResponse'
+        statusCode:
+          type: integer
+          format: int32
+    AuthenticationRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 1
+        username:
+          type: string
+          minLength: 1
+    AuthenticationResponse:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+        token:
+          type: string
+    IntrospectRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          minLength: 1
+    IntrospectResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+  securitySchemes:
+    admin-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    user-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

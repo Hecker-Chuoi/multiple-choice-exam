@@ -1,0 +1,294 @@
+openapi: 3.1.0
+info:
+  description: Multiple Choice Exam
+  title: Multiple Choice Exam
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/exam'
+    description: Generated server url
+paths:
+  '/taking-test/{sessionId}/questions':
+    get:
+      operationId: getQuestions
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseListQuestion'
+          description: OK
+      security:
+        - user-token: []
+      tags:
+        - taking-test-controller
+  '/taking-test/{sessionId}/result':
+    get:
+      operationId: getResult
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseResultResponse'
+          description: OK
+      security:
+        - user-token: []
+      tags:
+        - taking-test-controller
+  '/taking-test/{sessionId}/save-progress':
+    post:
+      operationId: saveAnswer
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CandidateAnswerRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - user-token: []
+      tags:
+        - taking-test-controller
+  '/taking-test/{sessionId}/start':
+    post:
+      operationId: startTest
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - user-token: []
+      tags:
+        - taking-test-controller
+  '/taking-test/{sessionId}/submit':
+    post:
+      operationId: submitTest
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+          description: OK
+      security:
+        - user-token: []
+      tags:
+        - taking-test-controller
+  '/taking-test/{sessionId}/test':
+    get:
+      operationId: getTest
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseTestResponse'
+          description: OK
+      security:
+        - user-token: []
+      tags:
+        - taking-test-controller
+components:
+  schemas:
+    Answer:
+      type: object
+      properties:
+        answerId:
+          type: integer
+          format: int64
+        answerText:
+          type: string
+        isCorrect:
+          type: boolean
+    ApiResponseListQuestion:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseResultResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/ResultResponse'
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: string
+        statusCode:
+          type: integer
+          format: int32
+    ApiResponseTestResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/TestResponse'
+        statusCode:
+          type: integer
+          format: int32
+    CandidateAnswer:
+      type: object
+      properties:
+        answerChosen:
+          type: string
+        correct:
+          type: boolean
+        testAnswerId:
+          type: integer
+          format: int64
+    CandidateAnswerRequest:
+      type: object
+      properties:
+        answerChosen:
+          type: string
+        questionId:
+          type: integer
+          format: int64
+      required:
+        - questionId
+    Question:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        explainText:
+          type: string
+        questionId:
+          type: integer
+          format: int64
+        questionText:
+          type: string
+        questionType:
+          type: string
+          enum:
+            - SINGLE_CHOICE
+            - MULTIPLE_CHOICES
+    ResultResponse:
+      type: object
+      properties:
+        candidateAnswered:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateAnswer'
+        candidateId:
+          type: integer
+          format: int64
+        score:
+          type: number
+          format: float
+        sessionId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - COMPLETED
+        submitAt:
+          type: string
+          format: date-time
+        testResultId:
+          type: integer
+          format: int64
+        timeTaken:
+          type: number
+          format: float
+    TestResponse:
+      type: object
+      properties:
+        editedTime:
+          type: string
+          format: date-time
+        isDeleted:
+          type: boolean
+        questionCount:
+          type: integer
+          format: int32
+        subject:
+          type: string
+        testId:
+          type: integer
+          format: int64
+        testName:
+          type: string
+  securitySchemes:
+    admin-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    user-token:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

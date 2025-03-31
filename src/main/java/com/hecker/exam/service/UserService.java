@@ -106,36 +106,26 @@ public class UserService {
     }
 
     private List<CandidateResult> filterResult(User user, String status){
-        if(status.isEmpty())
+        if(status.isBlank())
             return user.getTakenTests();
         return new ArrayList<>(user.getTakenTests().stream()
                 .filter(c -> c.getStatus().equals(TakingStatus.fromString(status))).toList());
     }
 
-    public List<CandidateResult> getTakenTests(String status) {
+    public List<CandidateResult> getMyTakenTests(String status) {
         User user = getMyInfo();
         return filterResult(user, status);
     }
 
-    public List<CandidateResult> getTakenTests(String username, String status) {
+    public List<CandidateResult> getUserTakenTests(String username, String status) {
         User user = getUserByUsername(username);
         return filterResult(user, status);
-    }
-
-    public List<TestSession> getAssignedSessions() {
-        User user = getMyInfo();
-        return user.getAssignedSessions();
-    }
-
-    public List<TestSession> getAssignedSessions(String username) {
-        User user = getUserByUsername(username);
-        return user.getAssignedSessions();
     }
 
     public List<TestSession> getMyUpcomingSession(){
         User user = getMyInfo();
         return user.getAssignedSessions().stream()
-                .filter(session -> session.getStartTime().isAfter(LocalDateTime.now()) && session.getStartTime().plus(session.getTimeLimit()).isAfter(LocalDateTime.now()))
+                .filter(session -> session.getStartTime().plus(session.getTimeLimit()).isAfter(LocalDateTime.now()))
                 .toList();
     }
 

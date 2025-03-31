@@ -40,7 +40,7 @@ public class SecurityConfig {
     String[] USER_ENDPOINTS = {
             "/user/myInfo",
             "/user/takenTests/{status}",
-            "/user/assignedSessions",
+            "/user/assigned-session/{status}",
             "/user/upcomingSessions",
 
             "/taking-test/{sessionId}/start",
@@ -58,8 +58,8 @@ public class SecurityConfig {
             "/user/type",
             "/user/candidates",
             "/user/all",
-            "/user/{username}/takenTests",
-            "/user/{username}/assignedSessions",
+            "/user/assigned-session",
+            "/user/{username}/assigned-session/{status}",
 
             "/test",
             "/test/all",
