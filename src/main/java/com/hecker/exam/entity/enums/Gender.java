@@ -21,6 +21,6 @@ public enum Gender {
 
     @JsonValue
     public String toJson() {
-        return name();
+        return this.name();
     }
 }

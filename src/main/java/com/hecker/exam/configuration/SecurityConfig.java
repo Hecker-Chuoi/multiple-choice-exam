@@ -35,13 +35,12 @@ public class SecurityConfig {
             "/auth/introspect"
     };
 
-    String[] AUTHENTICATED_ENDPOINTS = {
-            "/user/myInfo"
-    };
+    String[] AUTHENTICATED_ENDPOINTS = {};
 
     String[] USER_ENDPOINTS = {
             "/user/myInfo/takenTests",
             "/user/myInfo/assignedSessions",
+
             "/taking-test/{sessionId}/start",
             "/taking-test/{sessionId}/save-progress",
             "/taking-test/{sessionId}/submit",
@@ -49,18 +48,21 @@ public class SecurityConfig {
     };
 
     String[] ADMIN_ENDPOINTS = {
+            "/user/{username}",
+            "/user/type",
             "/user/one",
             "/user/many",
-            "/user/{username}",
             "/user/candidates",
             "/user/all",
+            "/user/{username}/takenTests",
             "/user/{username}/assignedSessions",
-            "/user/{username}/assignedSessions",
+
             "/test",
             "/test/all",
             "/test/valid",
             "/test/{testId}",
             "/test/{testId}/questions",
+
             "/session",
             "/session/{sessionId}",
             "/session/all",

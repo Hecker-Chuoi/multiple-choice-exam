@@ -33,9 +33,7 @@ public class AuthController {
             }
     ))
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Token received"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Bad request"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Token received")
     })
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> getToken(@RequestBody AuthenticationRequest request) {

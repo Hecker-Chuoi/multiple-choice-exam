@@ -3,9 +3,15 @@ package com.hecker.exam.controller;
 import com.hecker.exam.dto.request.session.SessionCreationRequest;
 import com.hecker.exam.dto.request.session.SessionUpdateRequest;
 import com.hecker.exam.dto.response.ApiResponse;
+import com.hecker.exam.dto.response.SessionResponse;
 import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.dto.response.UserResponse;
+import com.hecker.exam.entity.CandidateResult;
+import com.hecker.exam.entity.Question;
+import com.hecker.exam.entity.Test;
 import com.hecker.exam.entity.TestSession;
+import com.hecker.exam.mapper.SessionMapper;
+import com.hecker.exam.mapper.TestMapper;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.service.SessionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -20,36 +26,62 @@ import java.util.List;
 @RequestMapping("/session")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@SecurityRequirement(name = "bearer-jwt")
+@SecurityRequirement(name = "admin-token")
 public class SessionController {
     SessionService service;
+    SessionMapper sessionMapper;
     UserMapper userMapper;
+    TestMapper testMapper;
 
+// Create
     @PostMapping
-    public ApiResponse<TestSession> createSession(@RequestBody SessionCreationRequest request){
-        return ApiResponse.<TestSession>builder()
-                .result(service.createSession(request))
+    public ApiResponse<SessionResponse> createSession(@RequestBody SessionCreationRequest request){
+        TestSession session = service.createSession(request);
+        return ApiResponse.<SessionResponse>builder()
+                .result(sessionMapper.toResponse(session))
                 .build();
     }
 
+    @PostMapping("/{sessionId}/candidates")
+    public ApiResponse<String> candidateAssignByUsernames(@PathVariable long sessionId, @RequestBody List<String> usernames){
+        return service.candidateAssignByUsername(sessionId, usernames);
+    }
+
+    @PostMapping("/{sessionId}/types")
+    public ApiResponse<String> candidateAssignByTypes(@PathVariable long sessionId, @RequestBody List<String> types){
+        return service.candidateAssignByTypes(sessionId, types);
+    }
+
+// Read
     @GetMapping("/{sessionId}")
-    public ApiResponse<TestSession> getSession(@PathVariable long sessionId){
-        return ApiResponse.<TestSession>builder()
-                .result(service.getSession(sessionId))
+    public ApiResponse<SessionResponse> getSession(@PathVariable long sessionId){
+        TestSession result = service.getSession(sessionId);
+        return ApiResponse.<SessionResponse>builder()
+                .result(sessionMapper.toResponse(result))
                 .build();
     }
 
     @GetMapping("/all")
-    public ApiResponse<List<TestSession>> getAllSessions(){
-        return ApiResponse.<List<TestSession>>builder()
-                .result(service.getAllSessions())
+    public ApiResponse<List<SessionResponse>> getAllSessions(@RequestParam(required = false, defaultValue = "startTime") String sortBy){
+        List<TestSession> result = service.getAllSessions(sortBy);
+        return ApiResponse.<List<SessionResponse>>builder()
+                .result(sessionMapper.toResponses(result))
                 .build();
     }
 
     @GetMapping("/{sessionId}/test")
     public ApiResponse<TestResponse> getTest(@PathVariable long sessionId){
+        Test test = service.getTest(sessionId);
         return ApiResponse.<TestResponse>builder()
-                .result(service.getTest(sessionId))
+                .result(testMapper.toResponse(test))
+                .build();
+    }
+
+    @GetMapping("/{sessionId}/questions")
+    public ApiResponse<List<Question>> getQuestions(@PathVariable long sessionId){
+        List<Question> result = service.getQuestions(sessionId);
+        return ApiResponse.<List<Question>>builder()
+                .result(result)
                 .build();
     }
 
@@ -60,30 +92,37 @@ public class SessionController {
                 .build();
     }
 
+    @GetMapping("/{sessionId}/results")
+    public ApiResponse<List<CandidateResult>> getCandidateResults(@PathVariable long sessionId){
+        List<CandidateResult> results = service.getCandidateResults(sessionId);
+        return ApiResponse.<List<CandidateResult>>builder()
+                .result(results)
+                .build();
+    }
+
+// Update
     @PutMapping("/{sessionId}")
-    public ApiResponse<TestSession> updateSession(@PathVariable long sessionId, @RequestBody SessionUpdateRequest request){
-        return ApiResponse.<TestSession>builder()
-                .result(service.updateSession(sessionId, request))
+    public ApiResponse<SessionResponse> updateSession(@PathVariable long sessionId, @RequestBody SessionUpdateRequest request){
+        TestSession result = service.updateSession(sessionId, request);
+        return ApiResponse.<SessionResponse>builder()
+                .result(sessionMapper.toResponse(result))
                 .build();
     }
 
     @PutMapping("/{sessionId}/test")
-    public ApiResponse<TestSession> changeTest(@PathVariable long sessionId, @RequestBody long testId){
-        return ApiResponse.<TestSession>builder()
-                .result(service.changeTest(sessionId, testId))
+    public ApiResponse<SessionResponse> changeTest(@PathVariable long sessionId, @RequestBody long testId){
+        TestSession result = service.changeTest(sessionId, testId);
+        return ApiResponse.<SessionResponse>builder()
+                .result(sessionMapper.toResponse(result))
                 .build();
     }
 
+// Delete
     @DeleteMapping("/{sessionId}")
     public ApiResponse<String> deleteSession(@PathVariable long sessionId){
         service.deleteSession(sessionId);
         return ApiResponse.<String>builder()
                 .result("Session deleted successfully!")
                 .build();
-    }
-
-    @PostMapping("/{sessionId}/candidates")
-    public ApiResponse<String> candidateAssign(@PathVariable long sessionId, @RequestBody List<String> candidateUsernames){
-        return service.candidateAssign(sessionId, candidateUsernames);
     }
 }

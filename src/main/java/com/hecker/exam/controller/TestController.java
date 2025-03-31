@@ -5,6 +5,8 @@ import com.hecker.exam.dto.request.test.TestCreationRequest;
 import com.hecker.exam.dto.response.ApiResponse;
 import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.entity.Question;
+import com.hecker.exam.entity.Test;
+import com.hecker.exam.mapper.TestMapper;
 import com.hecker.exam.service.TestService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -19,47 +21,53 @@ import java.util.List;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@SecurityRequirement(name = "bearer-jwt")
+@SecurityRequirement(name = "admin-token")
 public class TestController {
     TestService service;
+    TestMapper mapper;
 
     // create new test
     @PostMapping
     public ApiResponse<TestResponse> createTest(@RequestBody TestCreationRequest request){
+        Test result = service.createTest(request);
         return ApiResponse.<TestResponse>builder()
-                .result(service.createTest(request))
+                .result(mapper.toResponse(result))
                 .build();
     }
 
     // get test by id
     @GetMapping("/{testId}")
     public ApiResponse<TestResponse> getTest(@PathVariable long testId){
+        Test result = service.getTest(testId);
         return ApiResponse.<TestResponse>builder()
-                .result(service.getTest(testId))
+                .result(mapper.toResponse(result))
                 .build();
     }
 
     // get valid tests
     @GetMapping("/valid")
-    public ApiResponse<List<TestResponse>> getValidTests(@RequestParam(defaultValue = "False") boolean isDeleted){
+    public ApiResponse<List<TestResponse>> getValidTests(){
+        List<Test> result = service.getValidTests();
         return ApiResponse.<List<TestResponse>>builder()
-                .result(service.getTestByDeleted(isDeleted))
+                .result(mapper.toResponses(result))
                 .build();
     }
 
     // get all tests
     @GetMapping("/all")
     public ApiResponse<List<TestResponse>> getAllTests(){
+        List<Test> result = service.getAllTests();
         return ApiResponse.<List<TestResponse>>builder()
-                .result(service.getAllTests())
+                .result(mapper.toResponses(result))
                 .build();
     }
 
     // update test by id
     @PutMapping("/{testId}")
     public ApiResponse<TestResponse> updateTest(@PathVariable long testId, @RequestBody TestCreationRequest request){
+        Test result = service.updateTest(testId, request);
         return ApiResponse.<TestResponse>builder()
-                .result(service.updateTest(testId, request))
+                .result(mapper.toResponse(result))
                 .build();
     }
 
@@ -90,8 +98,9 @@ public class TestController {
     // set/update questions by updating entire list
     @PostMapping("/{testId}/questions")
     public ApiResponse<TestResponse> setQuestions(@PathVariable long testId, @RequestBody List<@Valid QuestionCreationRequest> requests){
+        Test result = service.setQuestions(testId, requests);
         return ApiResponse.<TestResponse>builder()
-                .result(service.setQuestions(testId, requests))
+                .result(mapper.toResponse(result))
                 .build();
     }
 }

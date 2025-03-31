@@ -7,10 +7,12 @@ import com.hecker.exam.entity.CandidateResult;
 import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
+import com.hecker.exam.entity.enums.TakingStatus;
 import com.hecker.exam.entity.enums.Type;
 import com.hecker.exam.exception.AppException;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.repository.UserRepository;
+import com.hecker.exam.utils.importData.UserExcelInput;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -18,7 +20,6 @@ import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -61,7 +63,7 @@ public class UserService {
 
     @Transactional
     public List<User> createUsersFromExcel(MultipartFile excelFile) throws IOException {
-        List<UserCreationRequest> requests = ExcelInputService.readUserRequestFromExcel(excelFile);
+        List<UserCreationRequest> requests = UserExcelInput.readUserRequestFromExcel(excelFile);
         List<User> result = new ArrayList<>();
         for (int i = 0; i < requests.size(); ++i) {
             Set<ConstraintViolation<UserCreationRequest>> violations = validator.validate(requests.get(i));
@@ -95,22 +97,29 @@ public class UserService {
         return repos.findByRoleAndIsDeleted(Role.USER, false);
     }
 
-    public List<User> getUsersByTypes(String[] types) {
+    public List<User> getUsersByTypes(List<String> types) {
         Set<User> users = new HashSet<>();
         for(String type : types){
             users.addAll(repos.findByTypeAndIsDeleted(Type.fromString(type), false));
         }
-        return users.stream().toList();
+        return new ArrayList<>(users);
     }
 
-    public List<CandidateResult> getTakenTests() {
+    private List<CandidateResult> filterResult(User user, String status){
+        if(status.isEmpty())
+            return user.getTakenTests();
+        return new ArrayList<>(user.getTakenTests().stream()
+                .filter(c -> c.getStatus().equals(TakingStatus.fromString(status))).toList());
+    }
+
+    public List<CandidateResult> getTakenTests(String status) {
         User user = getMyInfo();
-        return user.getTakenTests();
+        return filterResult(user, status);
     }
 
-    public List<CandidateResult> getTakenTests(String username) {
+    public List<CandidateResult> getTakenTests(String username, String status) {
         User user = getUserByUsername(username);
-        return user.getTakenTests();
+        return filterResult(user, status);
     }
 
     public List<TestSession> getAssignedSessions() {
@@ -121,6 +130,13 @@ public class UserService {
     public List<TestSession> getAssignedSessions(String username) {
         User user = getUserByUsername(username);
         return user.getAssignedSessions();
+    }
+
+    public List<TestSession> getMyUpcomingSession(){
+        User user = getMyInfo();
+        return user.getAssignedSessions().stream()
+                .filter(session -> session.getStartTime().isAfter(LocalDateTime.now()))
+                .toList();
     }
 
     @Transactional

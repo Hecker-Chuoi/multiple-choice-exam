@@ -28,7 +28,14 @@ public class OpenAPIConfig {
                 .components(
                         new Components()
                                 .addSecuritySchemes(
-                                        "bearer-jwt",
+                                        "admin-token",
+                                        new SecurityScheme()
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")
+                                )
+                                .addSecuritySchemes(
+                                        "user-token",
                                         new SecurityScheme()
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")

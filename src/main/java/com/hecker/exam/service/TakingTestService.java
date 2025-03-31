@@ -25,15 +25,45 @@ public class TakingTestService {
     CandidateResultRepo repo;
     CandidateAnswerRepo answerRepo;
 
+    private void canAccess(long sessionId){
+        User currentUser = userService.getMyInfo();
+        TestSession session = sessionService.getSession(sessionId);
+        CandidateResult result = repo.findByCandidateAndTestSession(currentUser, session).orElseThrow(
+                () -> new AppException(StatusCode.SESSION_ACCESS_PERMISSION)
+        );
+
+        if(LocalDateTime.now().isBefore(session.getStartTime())){
+            throw new AppException(StatusCode.START_THE_SESSION);
+        }
+        if(LocalDateTime.now().isAfter(session.getStartTime().plus(session.getTimeLimit()))
+                || result.getStatus() == TakingStatus.COMPLETED){
+            throw new AppException(StatusCode.TEST_COMPLETED);
+        }
+    }
+
+    public Test getTest(long sessionId){
+        User currentUser = userService.getMyInfo();
+        TestSession session = sessionService.getSession(sessionId);
+
+        repo.findByCandidateAndTestSession(currentUser, session).orElseThrow(
+                () -> new AppException(StatusCode.SESSION_ACCESS_PERMISSION)
+        );
+
+        return session.getTest();
+    }
+
+    public List<Question> getQuestions(long sessionId){
+        canAccess(sessionId);
+        return getTest(sessionId).getQuestions();
+    }
+
     public void startTest(Long sessionId) {
         User currentUser = userService.getMyInfo();
         TestSession session = sessionService.getSession(sessionId);
-        List<User> grantedCandidates = session.getCandidates();
 
-        if(!grantedCandidates.contains(currentUser)){
-            throw new AppException(StatusCode.SESSION_ACCESS_PERMISSION);
-        }
-        if(repo.findByCandidateAndTestSession(currentUser, session).isPresent()){
+        CandidateResult result = findCandidateResult(currentUser, session);
+
+        if(result.getStatus() != TakingStatus.NOT_STARTED){
             throw new AppException(StatusCode.ALREADY_STARTED);
         }
         if(LocalDateTime.now().isBefore(session.getStartTime())){
@@ -42,17 +72,14 @@ public class TakingTestService {
         if(LocalDateTime.now().isAfter(session.getStartTime().plus(session.getTimeLimit()))){
             throw new AppException(StatusCode.SESSION_EXPIRED);
         }
-        CandidateResult candidateResult = CandidateResult.builder()
-                .candidate(currentUser)
-                .testSession(session)
-                .status(TakingStatus.IN_PROGRESS)
-                .build();
-        repo.save(candidateResult);
+
+        result.setStatus(TakingStatus.IN_PROGRESS);
+        repo.save(result);
     }
 
     private CandidateResult findCandidateResult(User candidate, TestSession session){
         return repo.findByCandidateAndTestSession(candidate, session).orElseThrow(
-                () -> new AppException(StatusCode.START_THE_TEST)
+                () -> new AppException(StatusCode.SESSION_ACCESS_PERMISSION)
         );
     }
 
@@ -85,7 +112,7 @@ public class TakingTestService {
 
         CandidateResult result = findCandidateResult(currentUser, session);
         if(result.getStatus() == TakingStatus.NOT_STARTED){
-            throw new AppException(StatusCode.START_THE_TEST);
+            throw new AppException(StatusCode.START_THE_SESSION);
         }
         if(result.getStatus() == TakingStatus.COMPLETED){
             throw new AppException(StatusCode.TEST_COMPLETED);

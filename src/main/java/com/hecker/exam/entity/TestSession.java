@@ -28,7 +28,7 @@ public class TestSession {
     @JsonSerialize(using = DurationSerializer.class)
     Duration timeLimit;
     @Builder.Default
-    boolean isDeleted = false;
+    Boolean isDeleted = false;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id", referencedColumnName = "testId")
@@ -45,4 +45,9 @@ public class TestSession {
     @JsonIgnore
     @ToString.Exclude
     List<User> candidates;
+
+    @OneToMany(mappedBy = "testSession", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
+    List<CandidateResult> candidateResults;
 }

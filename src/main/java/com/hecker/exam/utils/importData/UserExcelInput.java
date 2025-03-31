@@ -1,4 +1,4 @@
-package com.hecker.exam.service;
+package com.hecker.exam.utils.importData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-public class ExcelInputService {
+public class UserExcelInput {
     public static void main(String[] args) throws IOException {
         final String excelFilePath = "input.xlsx";
 //        final List<UserCreationRequest> requests = readUserRequestFromExcel(excelFilePath);

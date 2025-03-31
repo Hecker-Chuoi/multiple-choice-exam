@@ -20,7 +20,6 @@ spring:
     username: sa
     password: root
 
-
 springdoc:
   info:
     title: Multiple Choice Exam
@@ -31,6 +30,7 @@ springdoc:
       enabled: true
   swagger-ui:
     groups-order: asc
+    operations-sorter: method
 
 jwt:
   secret-key: "2V1jD5V4U7JOAO0XavZU90W2MNaVfcRrdwEzdFejWfvMAFi5dMGoE5CEJAAY9onL"

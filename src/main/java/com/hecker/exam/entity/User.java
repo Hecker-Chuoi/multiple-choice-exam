@@ -48,5 +48,6 @@ public class User {
     @ManyToMany(mappedBy = "candidates", fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonIgnore
+    @OrderBy("startTime ASC")
     List<TestSession> assignedSessions;
 }
