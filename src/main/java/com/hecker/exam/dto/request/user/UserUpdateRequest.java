@@ -1,11 +1,13 @@
-package com.hecker.exam.dto.request.auth;
+package com.hecker.exam.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
+import com.hecker.exam.entity.enums.Gender;
+import com.hecker.exam.entity.enums.Type;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
@@ -15,11 +17,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
+    @NotNull(message = "Vui lòng nhập ngày sinh")
     @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
     LocalDate dob;
-    String gender;
+    @NotNull
+    Gender gender;
     String phoneNumber;
+    @Email
     String mail;
-    String unit; // Đơn vị trong quân đội
+    @NotNull
+    Type type;
     String hometown;
 }

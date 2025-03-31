@@ -1,18 +1,18 @@
 package com.hecker.exam.service;
 
-import com.hecker.exam.dto.request.auth.UserCreationRequest;
-import com.hecker.exam.dto.request.auth.UserUpdateRequest;
-import com.hecker.exam.dto.response.ResultResponse;
+import com.hecker.exam.dto.request.user.UserCreationRequest;
+import com.hecker.exam.dto.request.user.UserUpdateRequest;
 import com.hecker.exam.dto.response.StatusCode;
-import com.hecker.exam.dto.response.UserResponse;
 import com.hecker.exam.entity.CandidateResult;
 import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.entity.enums.Role;
 import com.hecker.exam.entity.User;
+import com.hecker.exam.entity.enums.TakingStatus;
+import com.hecker.exam.entity.enums.Type;
 import com.hecker.exam.exception.AppException;
-import com.hecker.exam.mapper.CandidateResultMapper;
 import com.hecker.exam.mapper.UserMapper;
 import com.hecker.exam.repository.UserRepository;
+import com.hecker.exam.utils.importData.UserExcelInput;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -22,18 +22,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -55,14 +51,32 @@ public class UserService {
         return sb.toString();
     }
 
-    public UserResponse createUser(UserCreationRequest request) {
+    public User createUser(UserCreationRequest request) {
         User user = mapper.createUser(request);
         user.setUsername(generateUsername(request.getFullName()));
 
         user.setPassword(encoder.encode(request.getDob().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 
         user.setRole(Role.USER);
-        return mapper.toResponse(repos.save(user));
+        return repos.save(user);
+    }
+
+    @Transactional
+    public List<User> createUsersFromExcel(MultipartFile excelFile) throws IOException {
+        List<UserCreationRequest> requests = UserExcelInput.readUserRequestFromExcel(excelFile);
+        List<User> result = new ArrayList<>();
+        for (int i = 0; i < requests.size(); ++i) {
+            Set<ConstraintViolation<UserCreationRequest>> violations = validator.validate(requests.get(i));
+            if(!violations.isEmpty()){
+                StringJoiner joiner = new StringJoiner(" & ");
+                for (ConstraintViolation<UserCreationRequest> constraintViolation : violations) {
+                    joiner.add(constraintViolation.getMessage());
+                }
+                throw new ConstraintViolationException("Error occurred in record %d: ".formatted(i) + joiner.toString(), violations);
+            }
+            result.add(createUser(requests.get(i)));
+        }
+        return result;
     }
 
     public User getMyInfo() {
@@ -79,22 +93,33 @@ public class UserService {
         );
     }
 
-    public List<UserResponse> getCandidates() {
-        return mapper.toResponses(repos.findByRole(Role.USER));
+    public List<User> getUsers() {
+        return repos.findByRoleAndIsDeleted(Role.USER, false);
     }
 
-    public List<UserResponse> getAllUsers() {
-        return mapper.toResponses(repos.findAll());
+    public List<User> getUsersByTypes(List<String> types) {
+        Set<User> users = new HashSet<>();
+        for(String type : types){
+            users.addAll(repos.findByTypeAndIsDeleted(Type.fromString(type), false));
+        }
+        return new ArrayList<>(users);
     }
 
-    public List<CandidateResult> getTakenTests() {
+    private List<CandidateResult> filterResult(User user, String status){
+        if(status.isEmpty())
+            return user.getTakenTests();
+        return new ArrayList<>(user.getTakenTests().stream()
+                .filter(c -> c.getStatus().equals(TakingStatus.fromString(status))).toList());
+    }
+
+    public List<CandidateResult> getTakenTests(String status) {
         User user = getMyInfo();
-        return user.getTakenTests();
+        return filterResult(user, status);
     }
 
-    public List<CandidateResult> getTakenTests(String username) {
+    public List<CandidateResult> getTakenTests(String username, String status) {
         User user = getUserByUsername(username);
-        return user.getTakenTests();
+        return filterResult(user, status);
     }
 
     public List<TestSession> getAssignedSessions() {
@@ -107,15 +132,22 @@ public class UserService {
         return user.getAssignedSessions();
     }
 
+    public List<TestSession> getMyUpcomingSession(){
+        User user = getMyInfo();
+        return user.getAssignedSessions().stream()
+                .filter(session -> session.getStartTime().isAfter(LocalDateTime.now()))
+                .toList();
+    }
+
     @Transactional
-    public UserResponse updateUser(String username, UserUpdateRequest request) {
+    public User updateUser(String username, UserUpdateRequest request) {
         User targetUser = repos.findByUsername(username).orElseThrow(
                 () -> new AppException(StatusCode.USER_NOT_FOUND)
         );
         User newUser = mapper.updateUser(targetUser, request);
         newUser.setPassword(encoder.encode(request.getDob().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 
-        return mapper.toResponse(repos.save(newUser));
+        return repos.save(newUser);
     }
 
     @Transactional
@@ -124,23 +156,5 @@ public class UserService {
                 () -> new AppException(StatusCode.USER_NOT_FOUND)
         );
         repos.delete(targetUser);
-    }
-
-    @Transactional
-    public List<UserResponse> createUsersFromExcel(MultipartFile excelFile) throws IOException {
-        List<UserCreationRequest> requests = ExcelInputService.readUserRequestFromExcel(excelFile);
-        List<UserResponse> result = new ArrayList<>();
-        for (int i = 0; i < requests.size(); ++i) {
-            Set<ConstraintViolation<UserCreationRequest>> violations = validator.validate(requests.get(i));
-            if(!violations.isEmpty()){
-                StringJoiner joiner = new StringJoiner(" & ");
-                for (ConstraintViolation<UserCreationRequest> constraintViolation : violations) {
-                    joiner.add(constraintViolation.getMessage());
-                }
-                throw new ConstraintViolationException("Error occurred in record %d: ".formatted(i) + joiner.toString(), violations);
-            }
-            result.add(createUser(requests.get(i)));
-        }
-        return result;
     }
 }

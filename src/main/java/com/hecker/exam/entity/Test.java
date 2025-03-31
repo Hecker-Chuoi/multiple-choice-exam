@@ -27,7 +27,7 @@ public class Test {
     LocalDateTime editedTime;
     @Builder.Default
     @Column(columnDefinition = "bit default 0")
-    boolean isDeleted = false;
+    Boolean isDeleted = false;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "author", referencedColumnName = "userId")

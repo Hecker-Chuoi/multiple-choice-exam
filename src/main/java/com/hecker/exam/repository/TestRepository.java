@@ -8,6 +8,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TestRepository extends JpaRepository<Test, Long> {
-    @Query("select t from Test t where t.isDeleted = :isDeleted")
-    List<Test> findAllByDeleted(@Param("isDeleted") boolean isDeleted);
+    List<Test> findAllByIsDeleted(Boolean isDeleted);
 }

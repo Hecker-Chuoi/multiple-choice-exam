@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hecker.exam.entity.CandidateResult;
 import com.hecker.exam.entity.Test;
 import com.hecker.exam.entity.TestSession;
+import com.hecker.exam.entity.enums.Gender;
 import com.hecker.exam.entity.enums.Role;
+import com.hecker.exam.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,13 +26,12 @@ public class UserResponse {
     long userId;
     String username;
     String fullName;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
     LocalDate dob;
-    String gender;
+    Gender gender;
     String phoneNumber;
     String mail;
-    String unit; // Đơn vị trong quân đội
-    @Enumerated(EnumType.STRING)
-    Role role;
+    Type type;
     String hometown;
+    Role role;
 }

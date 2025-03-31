@@ -20,7 +20,6 @@ public class TestResponse {
     String subject;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm", shape = JsonFormat.Shape.STRING)
     LocalDateTime editedTime;
-    boolean isDeleted;
-
-    List<Question> questions;
+    Boolean isDeleted;
+    int questionCount;
 }

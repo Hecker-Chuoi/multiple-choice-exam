@@ -3,7 +3,6 @@ package com.hecker.exam.service;
 import com.hecker.exam.dto.request.test.QuestionCreationRequest;
 import com.hecker.exam.dto.request.test.TestCreationRequest;
 import com.hecker.exam.dto.response.StatusCode;
-import com.hecker.exam.dto.response.TestResponse;
 import com.hecker.exam.entity.Answer;
 import com.hecker.exam.entity.Question;
 import com.hecker.exam.entity.Test;
@@ -27,41 +26,40 @@ public class TestService {
     TestRepository repos;
     TestMapper mapper;
     UserService userService;
-    private final TestRepository testRepository;
 
-    public TestResponse createTest(TestCreationRequest request) {
+    public Test createTest(TestCreationRequest request) {
         Test test = mapper.toTest(request);
         test.setEditedTime(LocalDateTime.now());
         test.setAuthor(userService.getMyInfo());
-        return mapper.toResponse(repos.save(test));
+        return repos.save(test);
     }
 
-    public TestResponse getTest(long testId) {
-        return mapper.toResponse(repos.findById(testId).orElseThrow(() ->
-                new AppException(StatusCode.TEST_NOT_FOUND)));
+    public Test getTest(long testId) {
+        return repos.findById(testId).orElseThrow(() ->
+                new AppException(StatusCode.TEST_NOT_FOUND));
     }
 
-    public List<TestResponse> getTestByDeleted(boolean isDeleted) {
-        return mapper.toResponses(repos.findAllByDeleted(isDeleted));
+    public List<Test> getAllTests() {
+        return repos.findAll();
     }
 
-    public List<TestResponse> getAllTests() {
-        return mapper.toResponses(repos.findAll());
+    public List<Test> getValidTests() {
+        return repos.findAllByIsDeleted(false);
     }
 
-    public TestResponse updateTest(long testId, TestCreationRequest request) {
+    public Test updateTest(long testId, TestCreationRequest request) {
         Test test = repos.findById(testId).orElseThrow(() ->
                 new AppException(StatusCode.TEST_NOT_FOUND));
         mapper.updateTest(test, request);
         test.setEditedTime(LocalDateTime.now());
-        return mapper.toResponse(repos.save(test));
+        return repos.save(test);
     }
 
     public void deleteTest(long testId) {
         Test test = repos.findById(testId).orElseThrow(() ->
                 new AppException(StatusCode.TEST_NOT_FOUND));
         test.setEditedTime(LocalDateTime.now());
-        test.setDeleted(true);
+        test.setIsDeleted(true);
         repos.save(test);
     }
 
@@ -69,7 +67,7 @@ public class TestService {
         Test test = repos.findById(testId).orElseThrow(() ->
                 new AppException(StatusCode.TEST_NOT_FOUND));
         test.setEditedTime(LocalDateTime.now());
-        test.setDeleted(false);
+        test.setIsDeleted(false);
         repos.save(test);
     }
 
@@ -98,7 +96,7 @@ public class TestService {
     }
 
     @Transactional
-    public TestResponse setQuestions(long testId, List<QuestionCreationRequest> requests) {
+    public Test setQuestions(long testId, List<QuestionCreationRequest> requests) {
         Test test = repos.findById(testId).orElseThrow(
                 () -> new AppException(StatusCode.TEST_NOT_FOUND)
         );
@@ -110,6 +108,6 @@ public class TestService {
             test.getQuestions().add(question);
         }
 
-        return mapper.toResponse(testRepository.save(test));
+        return repos.save(test);
     }
 }

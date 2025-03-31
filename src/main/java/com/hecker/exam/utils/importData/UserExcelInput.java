@@ -1,4 +1,4 @@
-package com.hecker.exam.service;
+package com.hecker.exam.utils.importData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hecker.exam.dto.request.auth.UserCreationRequest;
+import com.hecker.exam.dto.request.user.UserCreationRequest;
+import com.hecker.exam.entity.enums.Gender;
+import com.hecker.exam.entity.enums.Type;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -18,7 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-public class ExcelInputService {
+public class UserExcelInput {
     public static void main(String[] args) throws IOException {
         final String excelFilePath = "input.xlsx";
 //        final List<UserCreationRequest> requests = readUserRequestFromExcel(excelFilePath);
@@ -70,7 +72,7 @@ public class ExcelInputService {
                         request.setDob(LocalDate.of(1900, 1, 1).plusDays(((Double) getCellValue(cell)).longValue() - 2));
                         break;
                     case 3:
-                        request.setGender((String) getCellValue(cell));
+                        request.setGender(Gender.fromString((String) getCellValue(cell)));
                         break;
                     case 4:
                         request.setPhoneNumber((String) getCellValue(cell));
@@ -79,7 +81,7 @@ public class ExcelInputService {
                         request.setMail((String) getCellValue(cell));
                         break;
                     case 6:
-                        request.setUnit((String) getCellValue(cell));
+                        request.setType(Type.fromString((String) getCellValue(cell)));
                         break;
                     case 7:
                         request.setHometown((String) getCellValue(cell));

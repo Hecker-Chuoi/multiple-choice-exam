@@ -2,10 +2,6 @@ package com.hecker.exam.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.hecker.exam.entity.enums.TakingStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,9 +20,11 @@ public class CandidateResult {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     long testResultId;
     @JsonFormat(pattern = "2.2f", shape = JsonFormat.Shape.STRING)
-    float timeTaken;
+    @Builder.Default
+    float timeTaken = 0;
     @JsonFormat(pattern = "2.2f", shape = JsonFormat.Shape.STRING)
-    float score;
+    @Builder.Default
+    float score = 0;
     @Enumerated(EnumType.STRING)
     @Builder.Default
     TakingStatus status = TakingStatus.NOT_STARTED; //Not started / In progress / Completed

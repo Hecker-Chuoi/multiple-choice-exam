@@ -1,6 +1,11 @@
-package com.hecker.exam.dto.request.auth;
+package com.hecker.exam.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.hecker.exam.entity.enums.Gender;
+import com.hecker.exam.entity.enums.Type;
+import com.hecker.exam.utils.DateDeserializer;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -17,11 +22,14 @@ public class UserCreationRequest {
     @NotEmpty(message = "Vui lòng nhập họ và tên")
     String fullName;
     @NotNull(message = "Vui lòng nhập ngày sinh")
-    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
+    @JsonDeserialize(using = DateDeserializer.class)
     LocalDate dob;
-    String gender;
+    @NotNull
+    Gender gender;
     String phoneNumber;
+    @Email
     String mail;
-    String unit; // Đơn vị trong quân đội
+    @NotNull
+    Type type;
     String hometown;
 }

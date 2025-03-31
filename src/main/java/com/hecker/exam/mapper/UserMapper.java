@@ -1,11 +1,10 @@
 package com.hecker.exam.mapper;
 
-import com.hecker.exam.dto.request.auth.UserCreationRequest;
-import com.hecker.exam.dto.request.auth.UserUpdateRequest;
+import com.hecker.exam.dto.request.user.UserCreationRequest;
+import com.hecker.exam.dto.request.user.UserUpdateRequest;
 import com.hecker.exam.dto.response.UserResponse;
 import com.hecker.exam.entity.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;

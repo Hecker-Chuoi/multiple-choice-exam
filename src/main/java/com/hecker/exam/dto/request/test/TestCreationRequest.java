@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TestCreationRequest {
+    @NotBlank
     String testName;
+    @NotBlank
     String subject;
 }

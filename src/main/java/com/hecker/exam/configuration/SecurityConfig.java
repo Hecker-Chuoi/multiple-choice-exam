@@ -35,13 +35,12 @@ public class SecurityConfig {
             "/auth/introspect"
     };
 
-    String[] AUTHENTICATED_ENDPOINTS = {
-            "/user/myInfo"
-    };
+    String[] AUTHENTICATED_ENDPOINTS = {};
 
     String[] USER_ENDPOINTS = {
             "/user/myInfo/takenTests",
             "/user/myInfo/assignedSessions",
+
             "/taking-test/{sessionId}/start",
             "/taking-test/{sessionId}/save-progress",
             "/taking-test/{sessionId}/submit",
@@ -49,18 +48,21 @@ public class SecurityConfig {
     };
 
     String[] ADMIN_ENDPOINTS = {
+            "/user/{username}",
+            "/user/type",
             "/user/one",
             "/user/many",
-            "/user/{username}",
             "/user/candidates",
             "/user/all",
+            "/user/{username}/takenTests",
             "/user/{username}/assignedSessions",
-            "/user/{username}/assignedSessions",
+
             "/test",
             "/test/all",
             "/test/valid",
             "/test/{testId}",
             "/test/{testId}/questions",
+
             "/session",
             "/session/{sessionId}",
             "/session/all",
@@ -78,6 +80,7 @@ public class SecurityConfig {
                  .cors(cors -> cors.configure(httpSecurity))
 
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(AUTHENTICATED_ENDPOINTS).hasAnyRole("ADMIN", "USER")
                         .requestMatchers(USER_ENDPOINTS).hasRole("USER")
@@ -101,7 +104,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8082")  // Chỉ định origin frontend
+                        .allowedOrigins("http://localhost")  // Chỉ định origin frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

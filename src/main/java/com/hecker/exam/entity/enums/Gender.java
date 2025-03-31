@@ -5,22 +5,22 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.hecker.exam.dto.response.StatusCode;
 import com.hecker.exam.exception.AppException;
 
-public enum TakingStatus {
-    NOT_STARTED,
-    IN_PROGRESS,
-    COMPLETED;
+public enum Gender {
+    MALE,
+    FEMALE,
+    OTHER;
 
     @JsonCreator
-    public static TakingStatus fromString (String status){
+    public static Gender fromString(String value) {
         try{
-            return TakingStatus.valueOf(status.toUpperCase());
-        } catch (Exception e) {
-            throw new AppException(StatusCode.TAKING_STATUS_INVALID);
+            return Gender.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new AppException(StatusCode.GENDER_INVALID);
         }
     }
 
     @JsonValue
-    public String toJson(){
+    public String toJson() {
         return this.name();
     }
 }
