@@ -135,7 +135,7 @@ public class UserService {
     public List<TestSession> getMyUpcomingSession(){
         User user = getMyInfo();
         return user.getAssignedSessions().stream()
-                .filter(session -> session.getStartTime().isAfter(LocalDateTime.now()))
+                .filter(session -> session.getStartTime().isAfter(LocalDateTime.now()) && session.getStartTime().plus(session.getTimeLimit()).isAfter(LocalDateTime.now()))
                 .toList();
     }
 

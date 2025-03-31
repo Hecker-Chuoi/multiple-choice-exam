@@ -30,7 +30,8 @@ springdoc:
       enabled: true
   swagger-ui:
     groups-order: asc
-    operations-sorter: method
+    operations-sorter: order
+  writer-with-order-by-keys: true
 
 jwt:
   secret-key: "2V1jD5V4U7JOAO0XavZU90W2MNaVfcRrdwEzdFejWfvMAFi5dMGoE5CEJAAY9onL"

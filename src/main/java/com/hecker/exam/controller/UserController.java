@@ -34,7 +34,7 @@ public class UserController {
     CandidateResultMapper resultMapper;
     SessionMapper sessionMapper;
 
-    @Operation(summary = "1. Create user")
+    @Operation(summary = "01. Create user")
     @SecurityRequirement(name = "admin-token")
     @PostMapping("/one")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
@@ -44,7 +44,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "2. Create users")
+    @Operation(summary = "02. Create users")
     @SecurityRequirement(name = "admin-token")
     @PostMapping("/many")
     public ApiResponse<List<UserResponse>> createUsers(@RequestParam("file") MultipartFile file) throws IOException {
@@ -54,7 +54,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "3. Get user by username")
+    @Operation(summary = "03. Get user by username")
     @SecurityRequirement(name = "admin-token")
     @GetMapping("/{username}")
     public ApiResponse<UserResponse> getUserByUsername(@PathVariable String username) {
@@ -64,7 +64,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "4. Get all users")
+    @Operation(summary = "04. Get all users")
     @SecurityRequirement(name = "admin-token")
     @GetMapping("/all")
     public ApiResponse<List<UserResponse>> getUsers() {
@@ -74,7 +74,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "5. Get users by type")
+    @Operation(summary = "05. Get users by type")
     @SecurityRequirement(name = "admin-token")
     @GetMapping("/type")
     public ApiResponse<List<UserResponse>> getUsersByType(@RequestBody List<String> type) {
@@ -84,7 +84,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "6. Get current logged in user")
+    @Operation(summary = "06. Get current logged in user")
     @SecurityRequirement(name = "user-token")
     @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getMyInfo() {
@@ -93,7 +93,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "7. Get my taken tests")
+    @Operation(summary = "07. Get my taken tests")
     @SecurityRequirement(name = "user-token")
     @GetMapping("/takenTests/{status}")
     public ApiResponse<List<ResultResponse>> getMyTakenTests(@PathVariable(required = false) String status) {
@@ -102,7 +102,7 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "8. Get my assigned sessions")
+    @Operation(summary = "08. Get my assigned sessions")
     @SecurityRequirement(name = "user-token")
     @GetMapping("/assignedSessions")
     public ApiResponse<List<SessionResponse>> getMyAssignedSessions() {
@@ -112,9 +112,9 @@ public class UserController {
                 .build();
     }
 
-    @Operation(summary = "9. Get my upcoming session")
+    @Operation(summary = "09. Get my upcoming session")
     @SecurityRequirement(name = "user-token")
-    @GetMapping("/upcomingSession")
+    @GetMapping("/upcomingSessions")
     public ApiResponse<List<SessionResponse>> getUpcomingSession() {
         List<TestSession> results = service.getMyUpcomingSession();
         return ApiResponse.<List<SessionResponse>>builder()
@@ -161,4 +161,3 @@ public class UserController {
                 .build();
     }
 }
-

@@ -38,20 +38,24 @@ public class SecurityConfig {
     String[] AUTHENTICATED_ENDPOINTS = {};
 
     String[] USER_ENDPOINTS = {
-            "/user/myInfo/takenTests",
-            "/user/myInfo/assignedSessions",
+            "/user/myInfo",
+            "/user/takenTests/{status}",
+            "/user/assignedSessions",
+            "/user/upcomingSessions",
 
             "/taking-test/{sessionId}/start",
             "/taking-test/{sessionId}/save-progress",
             "/taking-test/{sessionId}/submit",
+            "/taking-test/{sessionId}/test",
             "/taking-test/{sessionId}/result",
+            "/taking-test/{sessionId}/questions",
     };
 
     String[] ADMIN_ENDPOINTS = {
-            "/user/{username}",
-            "/user/type",
             "/user/one",
             "/user/many",
+            "/user/{username}",
+            "/user/type",
             "/user/candidates",
             "/user/all",
             "/user/{username}/takenTests",
@@ -61,13 +65,17 @@ public class SecurityConfig {
             "/test/all",
             "/test/valid",
             "/test/{testId}",
+            "/test/{testId}/restore",
             "/test/{testId}/questions",
 
             "/session",
             "/session/{sessionId}",
             "/session/all",
             "/session/{sessionId}/test",
-            "/session/{sessionId}/candidates"
+            "/session/{sessionId}/types",
+            "/session/{sessionId}/candidates",
+            "/session/{sessionId}/questions",
+            "/session/{sessionId}/results",
     };
 
     @NonFinal
