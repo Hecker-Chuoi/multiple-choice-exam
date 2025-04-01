@@ -1,13 +1,14 @@
 package com.hecker.exam.controller;
 
 import com.hecker.exam.dto.request.answer.CandidateAnswerRequest;
-import com.hecker.exam.dto.response.ApiResponse;
-import com.hecker.exam.dto.response.ResultResponse;
-import com.hecker.exam.dto.response.TestResponse;
+import com.hecker.exam.dto.response.*;
 import com.hecker.exam.entity.CandidateResult;
 import com.hecker.exam.entity.Question;
 import com.hecker.exam.entity.Test;
+import com.hecker.exam.entity.TestSession;
 import com.hecker.exam.mapper.CandidateResultMapper;
+import com.hecker.exam.mapper.QuestionMapper;
+import com.hecker.exam.mapper.SessionMapper;
 import com.hecker.exam.mapper.TestMapper;
 import com.hecker.exam.service.TakingTestService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.Session;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.transform.Result;
@@ -28,7 +30,17 @@ import java.util.List;
 public class TakingTestController {
     TakingTestService service;
     CandidateResultMapper mapper;
+    SessionMapper sessionMapper;
     TestMapper testMapper;
+    QuestionMapper questionMapper;
+
+    @GetMapping("/{sessionId}")
+    public ApiResponse<SessionResponse> getSession(@PathVariable("sessionId") Long sessionId){
+        TestSession session = service.getSession(sessionId);
+        return ApiResponse.<SessionResponse>builder()
+                .result(sessionMapper.toResponse(session))
+                .build();
+    }
 
     @GetMapping("/{sessionId}/test")
     public ApiResponse<TestResponse> getTest(@PathVariable("sessionId") Long sessionId){
@@ -39,10 +51,10 @@ public class TakingTestController {
     }
 
     @GetMapping("/{sessionId}/questions")
-    public ApiResponse<List<Question>> getQuestions(@PathVariable("sessionId") Long sessionId){
+    public ApiResponse<List<QuestionResponse>> getQuestions(@PathVariable("sessionId") Long sessionId){
         List<Question> result = service.getQuestions(sessionId);
-        return ApiResponse.<List<Question>>builder()
-                .result(result)
+        return ApiResponse.<List<QuestionResponse>>builder()
+                .result(questionMapper.toResponses(result))
                 .build();
     }
 

@@ -8,6 +8,7 @@ import com.hecker.exam.entity.Question;
 import com.hecker.exam.entity.Test;
 import com.hecker.exam.entity.enums.QuestionType;
 import com.hecker.exam.exception.AppException;
+import com.hecker.exam.mapper.QuestionMapper;
 import com.hecker.exam.mapper.TestMapper;
 import com.hecker.exam.repository.TestRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,7 @@ import java.util.List;
 public class TestService {
     TestRepository repos;
     TestMapper mapper;
+    QuestionMapper questionMapper;
     UserService userService;
 
     public Test createTest(TestCreationRequest request) {
@@ -72,7 +74,7 @@ public class TestService {
     }
 
     private Question createQuestion(QuestionCreationRequest request){
-        Question question = mapper.toQuestion(request);
+        Question question = questionMapper.toQuestion(request);
         List<Answer> answers = mapper.toAnswers(request.getAnswerCreationRequests());
 
         StringBuilder correctAnswer = new StringBuilder();

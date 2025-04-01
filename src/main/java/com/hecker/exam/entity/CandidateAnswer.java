@@ -19,7 +19,7 @@ public class CandidateAnswer {
 
     boolean isCorrect;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", referencedColumnName = "questionId")
     @ToString.Exclude
     @JsonIgnore

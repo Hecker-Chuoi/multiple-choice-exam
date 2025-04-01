@@ -18,7 +18,6 @@ import java.util.List;
 public interface TestMapper{
     Test toTest(TestCreationRequest request);
     void updateTest(@MappingTarget Test test, TestCreationRequest request);
-    Question toQuestion(QuestionCreationRequest request);
     List<Answer> toAnswers(List<AnswerCreationRequest> requests);
     @Mapping(target = "questionCount", source = "questions", qualifiedByName = "mapQuestionCount")
     TestResponse toResponse(Test test);

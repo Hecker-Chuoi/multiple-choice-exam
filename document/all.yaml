@@ -1,0 +1,2147 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "description": "Multiple Choice Exam",
+    "title": "Multiple Choice Exam",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/exam",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/auth/introspect": {
+      "post": {
+        "operationId": "introspect",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntrospectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseIntrospectResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "auth-controller"
+        ]
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "description": "Get token by username and password",
+        "operationId": "getToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "admin": {
+                  "description": "admin",
+                  "value": {
+                    "username": "admin",
+                    "password": "admin"
+                  }
+                },
+                "user": {
+                  "description": "user",
+                  "value": {
+                    "username": "user",
+                    "password": "user"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuthenticationResponse"
+                }
+              }
+            },
+            "description": "Token received"
+          }
+        },
+        "summary": "Get token",
+        "tags": [
+          "auth-controller"
+        ]
+      }
+    },
+    "/session": {
+      "post": {
+        "operationId": "createSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/all": {
+      "get": {
+        "operationId": "getAllSessions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sortBy",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "startTime"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/{sessionId}": {
+      "delete": {
+        "operationId": "deleteSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      },
+      "get": {
+        "operationId": "getSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      },
+      "put": {
+        "operationId": "updateSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/{sessionId}/candidates": {
+      "get": {
+        "operationId": "getCandidates",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      },
+      "post": {
+        "operationId": "candidateAssignByUsernames",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/{sessionId}/questions": {
+      "get": {
+        "operationId": "getQuestions_2",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListQuestion"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/{sessionId}/results": {
+      "get": {
+        "operationId": "getCandidateResults",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListResultResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/{sessionId}/test": {
+      "get": {
+        "operationId": "getTest_1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      },
+      "put": {
+        "operationId": "changeTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/session/{sessionId}/types": {
+      "post": {
+        "operationId": "candidateAssignByTypes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "session-controller"
+        ]
+      }
+    },
+    "/taking-test/{sessionId}/questions": {
+      "get": {
+        "operationId": "getQuestions_1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListQuestion"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "tags": [
+          "taking-test-controller"
+        ]
+      }
+    },
+    "/taking-test/{sessionId}/result": {
+      "get": {
+        "operationId": "getResult",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseResultResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "tags": [
+          "taking-test-controller"
+        ]
+      }
+    },
+    "/taking-test/{sessionId}/save-progress": {
+      "post": {
+        "operationId": "saveAnswer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CandidateAnswerRequest"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "tags": [
+          "taking-test-controller"
+        ]
+      }
+    },
+    "/taking-test/{sessionId}/start": {
+      "post": {
+        "operationId": "startTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "tags": [
+          "taking-test-controller"
+        ]
+      }
+    },
+    "/taking-test/{sessionId}/submit": {
+      "post": {
+        "operationId": "submitTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "tags": [
+          "taking-test-controller"
+        ]
+      }
+    },
+    "/taking-test/{sessionId}/test": {
+      "get": {
+        "operationId": "getTest_2",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "tags": [
+          "taking-test-controller"
+        ]
+      }
+    },
+    "/test": {
+      "post": {
+        "operationId": "createTest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      }
+    },
+    "/test/all": {
+      "get": {
+        "operationId": "getAllTests",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      }
+    },
+    "/test/valid": {
+      "get": {
+        "operationId": "getValidTests",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      }
+    },
+    "/test/{testId}": {
+      "delete": {
+        "operationId": "deleteTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      },
+      "get": {
+        "operationId": "getTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      },
+      "put": {
+        "operationId": "updateTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      }
+    },
+    "/test/{testId}/questions": {
+      "get": {
+        "operationId": "getQuestions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListQuestion"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      },
+      "post": {
+        "operationId": "setQuestions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/QuestionCreationRequest"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      }
+    },
+    "/test/{testId}/restore": {
+      "post": {
+        "operationId": "restoreTest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "tags": [
+          "test-controller"
+        ]
+      }
+    },
+    "/user/all": {
+      "get": {
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "04. Get all users",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/assigned-session/{status}": {
+      "get": {
+        "operationId": "getMyAssignedSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "status",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListResultResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "summary": "07. Get my taken tests",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/many": {
+      "post": {
+        "operationId": "createUsers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "02. Create users",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/myInfo": {
+      "get": {
+        "operationId": "getMyInfo",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "summary": "06. Get current logged in user",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/one": {
+      "post": {
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "01. Create user",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/type": {
+      "get": {
+        "operationId": "getUsersByType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "05. Get users by type",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/upcomingSessions": {
+      "get": {
+        "operationId": "getUpcomingSession",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "user-token": []
+          }
+        ],
+        "summary": "09. Get my upcoming session",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/{username}": {
+      "delete": {
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "13. Delete user",
+        "tags": [
+          "user-controller"
+        ]
+      },
+      "get": {
+        "operationId": "getUserByUsername",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "03. Get user by username",
+        "tags": [
+          "user-controller"
+        ]
+      },
+      "put": {
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "12. Update user",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    },
+    "/user/{username}/assigned-session/{status}": {
+      "get": {
+        "operationId": "getUserAssignedSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "status",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListResultResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "admin-token": []
+          }
+        ],
+        "summary": "11. Get user's taken tests",
+        "tags": [
+          "user-controller"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Answer": {
+        "type": "object",
+        "properties": {
+          "answerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "answerText": {
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AnswerCreationRequest": {
+        "type": "object",
+        "properties": {
+          "answerText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isCorrect"
+        ]
+      },
+      "ApiResponseAuthenticationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AuthenticationResponse"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseIntrospectResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/IntrospectResponse"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListQuestion": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Question"
+            }
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListResultResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResultResponse"
+            }
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListSessionResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionResponse"
+            }
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListTestResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TestResponse"
+            }
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListUserResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserResponse"
+            }
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseResultResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ResultResponse"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseSessionResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/SessionResponse"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseString": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseTestResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TestResponse"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseUserResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AuthenticationRequest": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1
+          },
+          "username": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "AuthenticationResponse": {
+        "type": "object",
+        "properties": {
+          "authenticated": {
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "CandidateAnswer": {
+        "type": "object",
+        "properties": {
+          "answerChosen": {
+            "type": "string"
+          },
+          "correct": {
+            "type": "boolean"
+          },
+          "testAnswerId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "CandidateAnswerRequest": {
+        "type": "object",
+        "properties": {
+          "answerChosen": {
+            "type": "string"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "questionId"
+        ]
+      },
+      "IntrospectRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "IntrospectResponse": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Question": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            }
+          },
+          "explainText": {
+            "type": "string"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionText": {
+            "type": "string"
+          },
+          "questionType": {
+            "type": "string",
+            "enum": [
+              "SINGLE_CHOICE",
+              "MULTIPLE_CHOICES"
+            ]
+          }
+        }
+      },
+      "QuestionCreationRequest": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnswerCreationRequest"
+            }
+          },
+          "explainText": {
+            "type": "string"
+          },
+          "questionText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "questionType": {
+            "type": "string",
+            "enum": [
+              "SINGLE_CHOICE",
+              "MULTIPLE_CHOICES"
+            ]
+          }
+        }
+      },
+      "ResultResponse": {
+        "type": "object",
+        "properties": {
+          "candidateAnswered": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CandidateAnswer"
+            }
+          },
+          "candidateId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "score": {
+            "type": "number",
+            "format": "float"
+          },
+          "sessionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NOT_STARTED",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "submitAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "testResultId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timeTaken": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "SessionCreationRequest": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "testId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timeLimit": {
+            "type": "string",
+            "example": "PT2H30M"
+          }
+        },
+        "required": [
+          "testId"
+        ]
+      },
+      "SessionResponse": {
+        "type": "object",
+        "properties": {
+          "candidateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "lastEditTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sessionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "testId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timeLimit": {
+            "type": "string",
+            "example": "PT2H30M"
+          }
+        }
+      },
+      "SessionUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timeLimit": {
+            "type": "string",
+            "example": "PT2H30M"
+          }
+        }
+      },
+      "TestCreationRequest": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "testName": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "TestResponse": {
+        "type": "object",
+        "properties": {
+          "editedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "questionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "testId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "testName": {
+            "type": "string"
+          }
+        }
+      },
+      "UserCreationRequest": {
+        "type": "object",
+        "properties": {
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "fullName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "MALE",
+              "FEMALE",
+              "OTHER"
+            ]
+          },
+          "hometown": {
+            "type": "string"
+          },
+          "mail": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Chiến sĩ",
+              "Sĩ quan",
+              "Chuyên nghiệp"
+            ]
+          }
+        },
+        "required": [
+          "dob",
+          "gender",
+          "type"
+        ]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "MALE",
+              "FEMALE",
+              "OTHER"
+            ]
+          },
+          "hometown": {
+            "type": "string"
+          },
+          "mail": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Chiến sĩ",
+              "Sĩ quan",
+              "Chuyên nghiệp"
+            ]
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "MALE",
+              "FEMALE",
+              "OTHER"
+            ]
+          },
+          "hometown": {
+            "type": "string"
+          },
+          "mail": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Chiến sĩ",
+              "Sĩ quan",
+              "Chuyên nghiệp"
+            ]
+          }
+        },
+        "required": [
+          "dob",
+          "gender",
+          "type"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "admin-token": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "user-token": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  }
+}

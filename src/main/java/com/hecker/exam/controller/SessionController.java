@@ -2,14 +2,12 @@ package com.hecker.exam.controller;
 
 import com.hecker.exam.dto.request.session.SessionCreationRequest;
 import com.hecker.exam.dto.request.session.SessionUpdateRequest;
-import com.hecker.exam.dto.response.ApiResponse;
-import com.hecker.exam.dto.response.SessionResponse;
-import com.hecker.exam.dto.response.TestResponse;
-import com.hecker.exam.dto.response.UserResponse;
+import com.hecker.exam.dto.response.*;
 import com.hecker.exam.entity.CandidateResult;
 import com.hecker.exam.entity.Question;
 import com.hecker.exam.entity.Test;
 import com.hecker.exam.entity.TestSession;
+import com.hecker.exam.mapper.CandidateResultMapper;
 import com.hecker.exam.mapper.SessionMapper;
 import com.hecker.exam.mapper.TestMapper;
 import com.hecker.exam.mapper.UserMapper;
@@ -32,6 +30,7 @@ public class SessionController {
     SessionMapper sessionMapper;
     UserMapper userMapper;
     TestMapper testMapper;
+    CandidateResultMapper resultMapper;
 
 // Create
     @PostMapping
@@ -93,10 +92,10 @@ public class SessionController {
     }
 
     @GetMapping("/{sessionId}/results")
-    public ApiResponse<List<CandidateResult>> getCandidateResults(@PathVariable long sessionId){
+    public ApiResponse<List<ResultResponse>> getCandidateResults(@PathVariable long sessionId){
         List<CandidateResult> results = service.getCandidateResults(sessionId);
-        return ApiResponse.<List<CandidateResult>>builder()
-                .result(results)
+        return ApiResponse.<List<ResultResponse>>builder()
+                .result(resultMapper.toResponses(results))
                 .build();
     }
 

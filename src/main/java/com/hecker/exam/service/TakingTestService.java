@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,6 +40,10 @@ public class TakingTestService {
                 || result.getStatus() == TakingStatus.COMPLETED){
             throw new AppException(StatusCode.TEST_COMPLETED);
         }
+    }
+
+    public TestSession getSession(long sessionId){
+        return sessionService.getSession(sessionId);
     }
 
     public Test getTest(long sessionId){
@@ -106,28 +111,32 @@ public class TakingTestService {
     }
 
     @Transactional
-    public void saveProgress(Long sessionId, List<CandidateAnswerRequest> answers){
+    public void saveProgress(Long sessionId, List<CandidateAnswerRequest> answers) {
         User currentUser = userService.getMyInfo();
         TestSession session = sessionService.getSession(sessionId);
 
         CandidateResult result = findCandidateResult(currentUser, session);
-        if(result.getStatus() == TakingStatus.NOT_STARTED){
+        if (result.getStatus() == TakingStatus.NOT_STARTED) {
             throw new AppException(StatusCode.START_THE_SESSION);
         }
-        if(result.getStatus() == TakingStatus.COMPLETED){
+        if (result.getStatus() == TakingStatus.COMPLETED) {
             throw new AppException(StatusCode.TEST_COMPLETED);
         }
-        answerRepo.deleteByCandidateResult(result);
+
+        // Xóa dữ liệu cũ trực tiếp từ danh sách thay vì xóa bằng Repository
+        result.getCandidateAnswered().clear();
+        repo.save(result);
 
         Test test = session.getTest();
-        for(CandidateAnswerRequest answer : answers){
+        for (CandidateAnswerRequest answer : answers) {
             CandidateAnswer cAnswer = toCandidateAnswer(test.getQuestions(), answer);
             cAnswer.setCandidateResult(result);
-            result.getCandidateAnswered().add(cAnswer);
+            result.getCandidateAnswered().add(cAnswer);  // Thêm vào danh sách hiện có
         }
 
         repo.save(result);
     }
+
 
     private float calculateScore(List<CandidateAnswer> cAnswers){
         int right = 0;
