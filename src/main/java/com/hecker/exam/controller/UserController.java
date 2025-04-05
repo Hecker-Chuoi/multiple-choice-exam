@@ -133,11 +133,21 @@ public class UserController {
 
     @Operation(summary = "13. Delete user")
     @SecurityRequirement(name = "admin-token")
-    @DeleteMapping("/{username}")
+    @DeleteMapping("/delete/{username}")
     public ApiResponse<String> deleteUser(@PathVariable String username) {
-        service.deleteUser(username);
+        String result = "Deleted: " + service.deleteUser(username);
         return ApiResponse.<String>builder()
-                .result("UserResponse deleted")
+                .result(result)
+                .build();
+    }
+
+    @Operation(summary = "14. Delete users")
+    @SecurityRequirement(name = "admin-token")
+    @DeleteMapping("/delete")
+    public ApiResponse<String> deleteUsers(@RequestBody List<String> usernames) {
+        String result = service.deleteUsers(usernames);
+        return ApiResponse.<String>builder()
+                .result(result)
                 .build();
     }
 }

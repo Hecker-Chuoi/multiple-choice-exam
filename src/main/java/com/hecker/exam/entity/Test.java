@@ -19,7 +19,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Test {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     long testId;
     @NotEmpty(message = "Vui lòng nhập tên bài thi")
     String testName;

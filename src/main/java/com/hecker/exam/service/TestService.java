@@ -33,6 +33,7 @@ public class TestService {
         Test test = mapper.toTest(request);
         test.setEditedTime(LocalDateTime.now());
         test.setAuthor(userService.getMyInfo());
+//        System.out.println(test);
         return repos.save(test);
     }
 
@@ -102,7 +103,6 @@ public class TestService {
         Test test = repos.findById(testId).orElseThrow(
                 () -> new AppException(StatusCode.TEST_NOT_FOUND)
         );
-        test.getQuestions().clear();
 
         for(QuestionCreationRequest request : requests){
             Question question = createQuestion(request);

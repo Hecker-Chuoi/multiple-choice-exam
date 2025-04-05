@@ -141,10 +141,20 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String username) {
+    public String deleteUser(String username) {
         User targetUser = repos.findByUsername(username).orElseThrow(
                 () -> new AppException(StatusCode.USER_NOT_FOUND)
         );
-        repos.delete(targetUser);
+        targetUser.setIsDeleted(true);
+        return username;
+    }
+
+    @Transactional
+    public String deleteUsers(List<String> usernames){
+        StringJoiner joiner = new StringJoiner(", ", "Deleted: ", ".");
+        for(String username : usernames){
+            joiner.add(deleteUser(username));
+        }
+        return joiner.toString();
     }
 }

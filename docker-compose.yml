@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Dịch vụ database sử dụng SQL Server
+  db:
+    image: rapidfort/microsoft-sql-server-2019-ib:latest
+    container_name: sql_server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Password  # Đổi mật khẩu này thành mật khẩu mạnh của bạn
+    ports:
+      - "1433:1433"  # Cổng của SQL Server
+    networks:
+      - app-network
+    volumes:
+      - sql_data:/var/opt/mssql  # Dữ liệu SQL sẽ được lưu trữ trên volume
+
+  # Dịch vụ backend sử dụng Java JDK
+  backend:
+    image: openjdk:11
+    container_name: java_backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app  # Chỉ thư mục backend vào container
+    ports:
+      - "8080:8080"  # Cổng mà ứng dụng backend sẽ chạy
+    command: ["java", "-jar", "your-backend-app.jar"]  # Lệnh để chạy ứng dụng backend của bạn
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  # Dịch vụ frontend sử dụng Node.js
+  frontend:
+    image: node:16
+    container_name: node_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app  # Chỉ thư mục frontend vào container
+    ports:
+      - "3000:3000"  # Cổng mà ứng dụng frontend sẽ chạy
+    command: ["npm", "start"]  # Lệnh để chạy ứng dụng frontend
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  sql_data:

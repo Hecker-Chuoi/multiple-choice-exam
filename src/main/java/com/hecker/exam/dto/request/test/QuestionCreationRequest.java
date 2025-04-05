@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuestionCreationRequest {
+    long questionId;
     @NotBlank(message = "Question text is required")
     String questionText;
     String explainText;

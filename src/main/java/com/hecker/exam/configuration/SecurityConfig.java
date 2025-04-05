@@ -44,13 +44,7 @@ public class SecurityConfig {
             "/user/assigned-session/{status}",
             "/user/upcomingSessions",
 
-            "/taking-test/{sessionId}",
-            "/taking-test/{sessionId}/test",
-            "/taking-test/{sessionId}/start",
-            "/taking-test/{sessionId}/submit",
-            "/taking-test/{sessionId}/result",
-            "/taking-test/{sessionId}/questions",
-            "/taking-test/{sessionId}/save-progress",
+            "/taking-test/**"
     };
 
     String[] ADMIN_ENDPOINTS = {
@@ -62,22 +56,10 @@ public class SecurityConfig {
             "/user/all",
             "/user/assigned-session",
             "/user/{username}/assigned-session/{status}",
+            "/user/delete/**",
 
-            "/test",
-            "/test/all",
-            "/test/valid",
-            "/test/{testId}",
-            "/test/{testId}/restore",
-            "/test/{testId}/questions",
-
-            "/session",
-            "/session/{sessionId}",
-            "/session/all",
-            "/session/{sessionId}/test",
-            "/session/{sessionId}/types",
-            "/session/{sessionId}/candidates",
-            "/session/{sessionId}/questions",
-            "/session/{sessionId}/results",
+            "/test/**",
+            "/session/**"
     };
 
     @NonFinal
@@ -113,11 +95,11 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost")  // Chỉ định origin frontend
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+                registry.addMapping("/**") // Áp dụng cho tất cả API
+                        .allowedOrigins("*") // Cho phép tất cả origin
+                        .allowedMethods("*") // Cho phép tất cả phương thức HTTP (GET, POST, PUT, DELETE,...)
+                        .allowedHeaders("*") // Cho phép tất cả headers
+                        .allowCredentials(false); // Không yêu cầu credentials
             }
         };
     }

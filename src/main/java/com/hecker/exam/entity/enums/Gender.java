@@ -6,9 +6,15 @@ import com.hecker.exam.dto.response.StatusCode;
 import com.hecker.exam.exception.AppException;
 
 public enum Gender {
-    MALE,
-    FEMALE,
-    OTHER;
+    MALE ("Nam"),
+    FEMALE ("Nữ"),
+    OTHER ("Khác");
+
+    final String vn;
+
+    Gender(String vn) {
+        this.vn = vn;
+    }
 
     @JsonCreator
     public static Gender fromString(String value) {
@@ -21,6 +27,6 @@ public enum Gender {
 
     @JsonValue
     public String toJson() {
-        return this.name();
+        return this.vn;
     }
 }

@@ -51,10 +51,10 @@ public class SessionService {
 
     public List<TestSession> getAllSessions(String sortByField){
         try{
-            return repo.findAllByIsDeleted(false, Sort.by(Sort.Direction.ASC, sortByField));
+            return repo.findAllByIsDeleted(false, Sort.by(Sort.Direction.DESC, sortByField));
         }
         catch(Exception e){
-            return repo.findAllByIsDeleted(false, Sort.by(Sort.Direction.ASC, "startTime"));
+            return repo.findAllByIsDeleted(false, Sort.by(Sort.Direction.DESC, "startTime"));
         }
     }
 
